@@ -1,0 +1,2 @@
+rm_conffile /etc/xdg/pimcommon.categories 4:20.04.1-2~
+rm_conffile /etc/xdg/pimcommon.renamecategories 4:20.04.1-2~

@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
@@ -40,9 +40,7 @@ class CompletionOrderWidget;
 class CompletionItem
 {
 public:
-    virtual ~CompletionItem()
-    {
-    }
+    virtual ~CompletionItem() = default;
 
     virtual QString label() const = 0;
     virtual QIcon icon() const = 0;
@@ -59,7 +57,7 @@ class PIMCOMMONAKONADI_TESTS_EXPORT CompletionOrderWidget : public QWidget
     Q_OBJECT
 public:
     explicit CompletionOrderWidget(QWidget *parent = nullptr);
-    ~CompletionOrderWidget();
+    ~CompletionOrderWidget() override;
     void save();
 
     KConfig *configFile();
@@ -89,4 +87,3 @@ private:
     bool mDirty = false;
 };
 }
-

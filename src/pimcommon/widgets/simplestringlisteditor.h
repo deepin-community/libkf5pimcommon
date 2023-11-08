@@ -4,7 +4,7 @@
     This file is part of KMail, the KDE mail client.
     SPDX-FileCopyrightText: 2001 Marc Mutz <mutz@kde.org>
 
-    SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+    SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
     SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -103,7 +103,6 @@ protected Q_SLOTS:
 private:
     void slotContextMenu(const QPoint &);
     bool containsString(const QString &str);
-    SimpleStringListEditorPrivate *const d;
+    std::unique_ptr<SimpleStringListEditorPrivate> const d;
 };
 }
-

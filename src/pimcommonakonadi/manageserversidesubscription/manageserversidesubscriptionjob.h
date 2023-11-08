@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2014-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2014-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -7,7 +7,7 @@
 #pragma once
 
 #include "pimcommonakonadi_export.h"
-#include <AkonadiCore/collection.h>
+#include <Akonadi/Collection>
 #include <QObject>
 #include <QSharedPointer>
 class QDBusPendingCallWatcher;
@@ -33,7 +33,6 @@ public:
 
 private:
     void slotConfigureSubscriptionFinished(QDBusPendingCallWatcher *watcher);
-    ManageServerSideSubscriptionJobPrivate *const d;
+    std::unique_ptr<ManageServerSideSubscriptionJobPrivate> const d;
 };
 }
-

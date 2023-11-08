@@ -1,14 +1,14 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 #include "customtoolspluginmanager.h"
 #include "customtoolsplugin.h"
+#include "pimcommon_debug.h"
 
 #include <KPluginFactory>
-#include <KPluginLoader>
 #include <KPluginMetaData>
 
 #include <QDebug>
@@ -47,7 +47,7 @@ public:
     {
     }
 
-    QVector<PimCommon::CustomToolsPlugin *> pluginsList() const;
+    Q_REQUIRED_RESULT QVector<PimCommon::CustomToolsPlugin *> pluginsList() const;
     void initializePluginList();
     void loadPlugin(CustomToolsPluginInfo *item);
     QVector<CustomToolsPluginInfo> mPluginList;
@@ -56,9 +56,13 @@ public:
 
 void CustomToolsPluginManagerPrivate::initializePluginList()
 {
-    const QVector<KPluginMetaData> plugins = KPluginLoader::findPlugins(QStringLiteral("pimcommon/customtools"));
-
+    const QVector<KPluginMetaData> plugins =
+        KPluginMetaData::findPlugins(QStringLiteral("pim" QT_STRINGIFY(QT_VERSION_MAJOR)) + QStringLiteral("/pimcommon/customtools"));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QVectorIterator<KPluginMetaData> i(plugins);
+#else
+    QListIterator<KPluginMetaData> i(plugins);
+#endif
     i.toBack();
     QSet<QString> unique;
     while (i.hasPrevious()) {
@@ -73,7 +77,7 @@ void CustomToolsPluginManagerPrivate::initializePluginList()
             mPluginList.push_back(info);
             unique.insert(info.saveName());
         } else {
-            qWarning() << "Plugin " << info.metaData.name() << " doesn't have correction plugin version. It will not be loaded.";
+            qCWarning(PIMCOMMON_LOG) << "Plugin " << info.metaData.name() << " doesn't have correction plugin version. It will not be loaded.";
         }
     }
     QVector<CustomToolsPluginInfo>::iterator end(mPluginList.end());
@@ -96,9 +100,8 @@ QVector<PimCommon::CustomToolsPlugin *> CustomToolsPluginManagerPrivate::plugins
 
 void CustomToolsPluginManagerPrivate::loadPlugin(CustomToolsPluginInfo *item)
 {
-    KPluginLoader pluginLoader(item->metaData.fileName());
-    if (pluginLoader.factory()) {
-        item->plugin = pluginLoader.factory()->create<PimCommon::CustomToolsPlugin>(q, QVariantList() << item->saveName());
+    if (auto plugin = KPluginFactory::instantiatePlugin<PimCommon::CustomToolsPlugin>(item->metaData, q, QVariantList() << item->saveName()).plugin) {
+        item->plugin = plugin;
     }
 }
 
@@ -115,10 +118,7 @@ CustomToolsPluginManager::CustomToolsPluginManager(QObject *parent)
     d->initializePluginList();
 }
 
-CustomToolsPluginManager::~CustomToolsPluginManager()
-{
-    delete d;
-}
+CustomToolsPluginManager::~CustomToolsPluginManager() = default;
 
 QVector<PimCommon::CustomToolsPlugin *> CustomToolsPluginManager::pluginsList() const
 {

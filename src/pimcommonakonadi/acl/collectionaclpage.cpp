@@ -9,7 +9,7 @@
 #include "aclmanager.h"
 #include "collectionaclwidget.h"
 #include "imapaclattribute.h"
-#include <AkonadiCore/Collection>
+#include <Akonadi/Collection>
 #include <KLocalizedString>
 #include <QHBoxLayout>
 
@@ -18,9 +18,7 @@ using namespace PimCommon;
 class PimCommon::CollectionAclPagePrivate
 {
 public:
-    CollectionAclPagePrivate()
-    {
-    }
+    CollectionAclPagePrivate() = default;
 
     CollectionAclWidget *mCollectionAclWidget = nullptr;
 };
@@ -35,15 +33,12 @@ CollectionAclPage::CollectionAclPage(QWidget *parent)
     init();
 }
 
-CollectionAclPage::~CollectionAclPage()
-{
-    delete d;
-}
+CollectionAclPage::~CollectionAclPage() = default;
 
 void CollectionAclPage::init()
 {
     auto layout = new QHBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins({});
     d->mCollectionAclWidget = new CollectionAclWidget(this);
     layout->addWidget(d->mCollectionAclWidget);
 }

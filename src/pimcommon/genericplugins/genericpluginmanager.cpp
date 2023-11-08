@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -9,7 +9,6 @@
 #include "pimcommon_debug.h"
 
 #include <KPluginFactory>
-#include <KPluginLoader>
 
 #include <QFileInfo>
 
@@ -18,10 +17,9 @@ using namespace PimCommon;
 class GenericPluginInfo
 {
 public:
-    GenericPluginInfo()
-    {
-    }
+    GenericPluginInfo() = default;
 
+    KPluginMetaData data;
     QString metaDataFileNameBaseName;
     QString metaDataFileName;
     PimCommon::PluginUtilData pluginData;
@@ -46,15 +44,15 @@ public:
     }
 
     void loadPlugin(GenericPluginInfo *item);
-    QVector<GenericPlugin *> pluginsList() const;
+    Q_REQUIRED_RESULT QVector<GenericPlugin *> pluginsList() const;
     bool initializePlugins();
     QString pluginDirectory;
     QString pluginName;
     QVector<GenericPluginInfo> mPluginList;
 
-    QVector<PluginUtilData> pluginsDataList() const;
-    QString configGroupName() const;
-    QString configPrefixSettingKey() const;
+    Q_REQUIRED_RESULT QVector<PluginUtilData> pluginsDataList() const;
+    Q_REQUIRED_RESULT QString configGroupName() const;
+    Q_REQUIRED_RESULT QString configPrefixSettingKey() const;
     GenericPlugin *pluginFromIdentifier(const QString &id);
 
 private:
@@ -81,7 +79,7 @@ bool GenericPluginManagerPrivate::initializePlugins()
     if (pluginDirectory.isEmpty() || pluginName.isEmpty()) {
         return false;
     }
-    const QVector<KPluginMetaData> plugins = KPluginLoader::findPlugins(pluginDirectory);
+    const QVector<KPluginMetaData> plugins = KPluginMetaData::findPlugins(pluginDirectory);
 
     const QPair<QStringList, QStringList> pair = PimCommon::PluginUtil::loadPluginSetting(configGroupName(), configPrefixSettingKey());
     QVectorIterator<KPluginMetaData> i(plugins);
@@ -98,6 +96,7 @@ bool GenericPluginManagerPrivate::initializePlugins()
         info.isEnabled = isPluginActivated;
         info.metaDataFileNameBaseName = QFileInfo(data.fileName()).baseName();
         info.metaDataFileName = data.fileName();
+        info.data = data;
 
         if (pluginVersion() == data.version()) {
             info.plugin = nullptr;
@@ -132,9 +131,8 @@ QVector<GenericPlugin *> GenericPluginManagerPrivate::pluginsList() const
 
 void GenericPluginManagerPrivate::loadPlugin(GenericPluginInfo *item)
 {
-    KPluginLoader pluginLoader(item->metaDataFileName);
-    if (pluginLoader.factory()) {
-        item->plugin = pluginLoader.factory()->create<PimCommon::GenericPlugin>(q, QVariantList() << item->metaDataFileNameBaseName);
+    if (auto plugin = KPluginFactory::instantiatePlugin<PimCommon::GenericPlugin>(item->data, q, QVariantList() << item->metaDataFileNameBaseName).plugin) {
+        item->plugin = plugin;
         item->plugin->setIsEnabled(item->isEnabled);
         item->pluginData.mHasConfigureDialog = item->plugin->hasConfigureDialog();
         mPluginDataList.append(item->pluginData);
@@ -158,10 +156,7 @@ GenericPluginManager::GenericPluginManager(QObject *parent)
 {
 }
 
-GenericPluginManager::~GenericPluginManager()
-{
-    delete d;
-}
+GenericPluginManager::~GenericPluginManager() = default;
 
 bool GenericPluginManager::initializePlugins()
 {

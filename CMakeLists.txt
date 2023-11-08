@@ -1,16 +1,18 @@
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileCopyrightText: none
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
-set(PIM_VERSION "5.18.1")
+set(PIM_VERSION "5.22.3")
 
 project(pimcommon VERSION ${PIM_VERSION})
 
-set(KF5_MIN_VERSION "5.83.0")
+set(KF5_MIN_VERSION "5.99.0")
 
 find_package(ECM ${KF5_MIN_VERSION} CONFIG REQUIRED)
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${ECM_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
-include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
+include(KDECompilerSettings NO_POLICY_SCOPE)
 
 include(GenerateExportHeader)
 include(ECMSetupVersion)
@@ -19,26 +21,35 @@ include(ECMGeneratePriFile)
 
 include(FeatureSummary)
 include(KDEGitCommitHooks)
+include(KDEClangFormat)
+file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES *.cpp *.h *.c)
+kde_clang_format(${ALL_CLANG_FORMAT_SOURCE_FILES})
+
 include(ECMQtDeclareLoggingCategory)
+include(ECMDeprecationSettings)
 include(ECMAddTests)
 include(ECMInstallIcons)
 include(ECMAddQtDesignerPlugin)
+include(ECMAddQch)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(BUILD_QCH "Build API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)" OFF)
+add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)")
 
 set(PIMCOMMON_LIB_VERSION ${PIM_VERSION})
-set(AKONADICONTACT_LIB_VERSION "5.18.1")
-set(LIBKDEPIM_LIB_VERSION "5.18.1")
-set(QT_REQUIRED_VERSION "5.15.0")
-set(KMIME_LIB_VERSION "5.18.1")
-set(KIMAP_LIB_VERSION "5.18.1")
-set(KPIMTEXTEDIT_LIB_VERSION "5.18.1")
-set(AKONADI_VERSION "5.18.1")
-set(KLDAP_LIB_VERSION "5.18.1")
-set(GRANTLEETHEME_LIB_VERSION "5.18.1")
+set(LIBKDEPIM_LIB_VERSION "5.22.3")
+set(QT_REQUIRED_VERSION "5.15.2")
+if (QT_MAJOR_VERSION STREQUAL "6")
+    set(QT_REQUIRED_VERSION "6.4.0")
+endif()
+set(KIMAP_LIB_VERSION "5.22.3")
+set(KPIMTEXTEDIT_LIB_VERSION "5.22.3")
+set(KLDAP_LIB_VERSION "5.22.3")
 
-find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG REQUIRED Widgets DBus Network Test Xml PrintSupport)
+set(AKONADICONTACT_LIB_VERSION "5.22.3")
+set(AKONADI_VERSION "5.22.3")
+
+find_package(Qt${QT_MAJOR_VERSION} ${QT_REQUIRED_VERSION} CONFIG REQUIRED Widgets DBus Network Test Xml)
 
 find_package(KF5Archive ${KF5_MIN_VERSION} CONFIG REQUIRED)
 find_package(KF5Codecs ${KF5_MIN_VERSION} CONFIG REQUIRED)
@@ -54,7 +65,6 @@ find_package(KF5Service ${KF5_MIN_VERSION} CONFIG REQUIRED)
 find_package(KF5WidgetsAddons ${KF5_MIN_VERSION} CONFIG REQUIRED)
 find_package(KF5XmlGui ${KF5_MIN_VERSION} CONFIG REQUIRED)
 find_package(KF5KCMUtils ${KF5_MIN_VERSION} CONFIG REQUIRED)
-
 find_package(KF5Akonadi ${AKONADI_VERSION} CONFIG REQUIRED)
 find_package(KF5AkonadiContact ${AKONADICONTACT_LIB_VERSION} CONFIG REQUIRED)
 find_package(KF5Contacts ${KF5_MIN_VERSION} CONFIG REQUIRED)
@@ -62,10 +72,8 @@ find_package(KF5IMAP ${KIMAP_LIB_VERSION} CONFIG REQUIRED)
 find_package(KF5PimTextEdit ${KPIMTEXTEDIT_LIB_VERSION} CONFIG REQUIRED)
 find_package(KF5Ldap ${KLDAP_LIB_VERSION} CONFIG REQUIRED)
 find_package(KF5Libkdepim ${LIBKDEPIM_LIB_VERSION} CONFIG REQUIRED)
-find_package(KF5GrantleeTheme ${GRANTLEETHEME_LIB_VERSION} CONFIG REQUIRED)
 
 find_package(KF5Purpose ${KF5_MIN_VERSION} CONFIG REQUIRED)
-
 option(USE_UNITY_CMAKE_SUPPORT "Use UNITY cmake support (speedup compile time)" OFF)
 
 set(COMPILE_WITH_UNITY_CMAKE_SUPPORT OFF)
@@ -77,28 +85,34 @@ option(BUILD_DESIGNERPLUGIN "Build plugin for Qt Designer" ON)
 add_feature_info(DESIGNERPLUGIN ${BUILD_DESIGNERPLUGIN} "Build plugin for Qt Designer")
 
 option(FORCE_DISABLE_AKONADI_SEARCH "Disable features and API that require akonadi-search, e.g. because xapian isn't available" OFF)
-if (NOT FORCE_DISABLE_AKONADI_SEARCH)
-   set(AKONADI_SEARCH_VERSION "5.18.1")	
-   find_package(KF5AkonadiSearch ${AKONADI_SEARCH_VERSION} CONFIG REQUIRED)
-   set_package_properties(KF5AkonadiSearch PROPERTIES DESCRIPTION "The Akonadi Search libraries" URL "https://invent.kde.org/pim/akonadi-search" TYPE REQUIRED PURPOSE "Provides search capabilities in KMail and Akonadi")
+if (UNIX)
+    if (NOT FORCE_DISABLE_AKONADI_SEARCH)
+        find_package(KF5AkonadiSearch ${AKONADI_SEARCH_VERSION} CONFIG REQUIRED)
+        set_package_properties(KF5AkonadiSearch PROPERTIES DESCRIPTION "The Akonadi Search libraries" URL "https://invent.kde.org/pim/akonadi-search" TYPE REQUIRED PURPOSE "Provides search capabilities in KMail and Akonadi")
+    endif()
+else()
+    if (NOT FORCE_DISABLE_AKONADI_SEARCH)
+        find_package(KF5AkonadiSearch ${AKONADI_SEARCH_VERSION} CONFIG)
+        set_package_properties(KF5AkonadiSearch PROPERTIES DESCRIPTION "The Akonadi Search libraries" URL "https://invent.kde.org/pim/akonadi-search" TYPE OPTIONAL PURPOSE "Provides search capabilities in KMail and Akonadi")
+    endif()
+endif()
+
+if (NOT KF5AkonadiSearch_FOUND)
+    set(FORCE_DISABLE_AKONADI_SEARCH TRUE)
 endif()
 
 set(DISABLE_AKONADI_SEARCH ${FORCE_DISABLE_AKONADI_SEARCH})
 configure_file(config-akonadi-search.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/config-akonadi-search.h)
 
 
-find_package(Xsltproc)
-set_package_properties(Xsltproc PROPERTIES DESCRIPTION "XSLT processor from libxslt" TYPE REQUIRED PURPOSE "Required to generate D-Bus interfaces for all Akonadi resources.")
-
 if(BUILD_TESTING)
-   find_package(KF5Mime ${KMIME_LIB_VERSION} CONFIG REQUIRED)
    add_definitions(-DBUILD_TESTING)
 endif(BUILD_TESTING)
 
 ########### Targets ###########
 
-add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050f00)
-add_definitions(-DKF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x055000) 
+ecm_set_disabled_deprecation_versions(QT 5.15.2 KF 5.99.0)
+ 
 
 
 add_subdirectory(src)

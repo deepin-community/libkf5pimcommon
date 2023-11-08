@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2017-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2017-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -31,7 +31,7 @@ public Q_SLOTS:
     void slotClearHistory();
 
 private:
-    QStringListModel *mCompleterListModel = nullptr;
+    QStringListModel *const mCompleterListModel;
     QStringList mListCompetion;
 };
 }

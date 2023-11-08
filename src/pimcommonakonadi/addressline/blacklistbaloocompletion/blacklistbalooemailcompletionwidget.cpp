@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
@@ -106,7 +106,7 @@ BlackListBalooEmailCompletionWidget::BlackListBalooEmailCompletionWidget(QWidget
     searchLineLayout->addWidget(mSearchInResultLineEdit);
 
     auto excludeDomainLayout = new QHBoxLayout;
-    excludeDomainLayout->setContentsMargins(0, 0, 0, 0);
+    excludeDomainLayout->setContentsMargins({});
     mainLayout->addLayout(excludeDomainLayout);
 
     auto excludeDomainLabel = new QLabel(i18n("Exclude domain names:"), this);
@@ -124,9 +124,7 @@ BlackListBalooEmailCompletionWidget::BlackListBalooEmailCompletionWidget(QWidget
     slotSelectionChanged();
 }
 
-BlackListBalooEmailCompletionWidget::~BlackListBalooEmailCompletionWidget()
-{
-}
+BlackListBalooEmailCompletionWidget::~BlackListBalooEmailCompletionWidget() = default;
 
 void BlackListBalooEmailCompletionWidget::slotSelectionChanged()
 {

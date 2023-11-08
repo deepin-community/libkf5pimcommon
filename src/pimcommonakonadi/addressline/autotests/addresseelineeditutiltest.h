@@ -1,5 +1,5 @@
 /*
-   SPDX-FileCopyrightText: 2016-2021 Laurent Montel <montel@kde.org>
+   SPDX-FileCopyrightText: 2016-2022 Laurent Montel <montel@kde.org>
 
    SPDX-License-Identifier: LGPL-2.0-or-later
 */
@@ -13,10 +13,9 @@ class AddresseeLineEditUtilTest : public QObject
     Q_OBJECT
 public:
     explicit AddresseeLineEditUtilTest(QObject *parent = nullptr);
-    ~AddresseeLineEditUtilTest();
+    ~AddresseeLineEditUtilTest() override;
 
 private Q_SLOTS:
     void shouldAdaptPasteMails_data();
     void shouldAdaptPasteMails();
 };
-

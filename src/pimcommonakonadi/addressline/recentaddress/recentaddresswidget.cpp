@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
@@ -22,28 +22,30 @@
 
 #include <Libkdepim/LineEditCatchReturnKey>
 #include <PimCommon/EmailValidator>
+#include <kwidgetsaddons_version.h>
 
 using namespace PimCommon;
 RecentAddressWidget::RecentAddressWidget(QWidget *parent)
     : QWidget(parent)
+    , mLineEdit(new QLineEdit(this))
+    , mNewButton(new QToolButton(this))
+    , mRemoveButton(new QToolButton(this))
+    , mListView(new QListWidget(this))
 {
     auto layout = new QVBoxLayout(this);
 
     auto lineLayout = new QHBoxLayout;
     layout->addLayout(lineLayout);
 
-    mLineEdit = new QLineEdit(this);
     mLineEdit->setObjectName(QStringLiteral("line_edit"));
     new KPIM::LineEditCatchReturnKey(mLineEdit, this);
     mLineEdit->installEventFilter(this);
     mLineEdit->setClearButtonEnabled(true);
-    auto emailValidator = new PimCommon::EmailValidator(this);
-    mLineEdit->setValidator(emailValidator);
+    mLineEdit->setValidator(new PimCommon::EmailValidator(this));
     connect(mLineEdit, &QLineEdit::returnPressed, this, &RecentAddressWidget::slotAddItem);
 
     lineLayout->addWidget(mLineEdit);
 
-    mNewButton = new QToolButton(this);
     mNewButton->setToolTip(i18n("Add"));
     mNewButton->setObjectName(QStringLiteral("new_button"));
     mNewButton->setIcon(QIcon::fromTheme(QStringLiteral("list-add")));
@@ -52,7 +54,6 @@ RecentAddressWidget::RecentAddressWidget(QWidget *parent)
     connect(mLineEdit, &QLineEdit::textChanged, this, &RecentAddressWidget::slotUpdateAddButton);
     lineLayout->addWidget(mNewButton);
 
-    mRemoveButton = new QToolButton(this);
     mRemoveButton->setIcon(QIcon::fromTheme(QStringLiteral("list-remove")));
     mRemoveButton->setToolTip(i18n("Remove"));
     mRemoveButton->setObjectName(QStringLiteral("remove_button"));
@@ -64,7 +65,6 @@ RecentAddressWidget::RecentAddressWidget(QWidget *parent)
     shortcut->setKey(QKeySequence(Qt::Key_Delete));
     connect(shortcut, &QShortcut::activated, this, &RecentAddressWidget::slotRemoveItem);
 
-    mListView = new QListWidget(this);
     mListView->setObjectName(QStringLiteral("list_view"));
     mListView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     mListView->setSortingEnabled(true);
@@ -73,9 +73,7 @@ RecentAddressWidget::RecentAddressWidget(QWidget *parent)
     mDirty = false;
 }
 
-RecentAddressWidget::~RecentAddressWidget()
-{
-}
+RecentAddressWidget::~RecentAddressWidget() = default;
 
 void RecentAddressWidget::slotUpdateAddButton(const QString &str)
 {
@@ -109,10 +107,21 @@ void RecentAddressWidget::slotRemoveItem()
     if (selectedItems.isEmpty()) {
         return;
     }
-    if (KMessageBox::Yes
-        == KMessageBox::questionYesNo(this,
-                                      i18np("Do you want to remove this email address?", "Do you want to remove %1 email addresses?", selectedItems.count()),
-                                      i18n("Remove"))) {
+    const int answer =
+#if KWIDGETSADDONS_VERSION >= QT_VERSION_CHECK(5, 100, 0)
+        KMessageBox::questionTwoActions(this,
+#else
+        KMessageBox::questionYesNo(this,
+#endif
+                                        i18np("Do you want to remove this email address?", "Do you want to remove %1 email addresses?", selectedItems.count()),
+                                        i18n("Remove"),
+                                        KStandardGuiItem::remove(),
+                                        KStandardGuiItem::cancel());
+#if KWIDGETSADDONS_VERSION >= QT_VERSION_CHECK(5, 100, 0)
+    if (answer == KMessageBox::ButtonCode::PrimaryAction) {
+#else
+    if (answer == KMessageBox::Yes) {
+#endif
         for (QListWidgetItem *item : selectedItems) {
             delete mListView->takeItem(mListView->row(item));
         }

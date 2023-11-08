@@ -7,7 +7,7 @@
 #pragma once
 
 #include "pimcommonakonadi_export.h"
-#include <Attribute>
+#include <Akonadi/Attribute>
 
 #include <QMap>
 
@@ -20,7 +20,7 @@ class PIMCOMMONAKONADI_EXPORT CollectionAnnotationsAttribute : public Akonadi::A
 {
 public:
     CollectionAnnotationsAttribute();
-    CollectionAnnotationsAttribute(const QMap<QByteArray, QByteArray> &annotations);
+    explicit CollectionAnnotationsAttribute(const QMap<QByteArray, QByteArray> &annotations);
     ~CollectionAnnotationsAttribute() override = default;
 
     void setAnnotations(const QMap<QByteArray, QByteArray> &annotations);
@@ -37,4 +37,3 @@ private:
     QMap<QByteArray, QByteArray> mAnnotations;
 };
 }
-

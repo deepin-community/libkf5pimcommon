@@ -12,8 +12,8 @@
 #include <KLDAP/LdapClient>
 #include <KLDAP/LdapClientSearch>
 
-#include <kcontacts/addressee.h>
-#include <kcontacts/contactgroup.h>
+#include <KContacts/Addressee>
+#include <KContacts/ContactGroup>
 #include <kldap/ldapserver.h>
 
 #include <KConfigGroup>
@@ -28,9 +28,7 @@ using namespace PimCommon;
 class PimCommon::CompletionOrderEditorPrivate
 {
 public:
-    CompletionOrderEditorPrivate()
-    {
-    }
+    CompletionOrderEditorPrivate() = default;
 
     CompletionOrderWidget *mCompletionOrderWidget = nullptr;
 };
@@ -65,7 +63,6 @@ CompletionOrderEditor::CompletionOrderEditor(KLDAP::LdapClientSearch *ldapSearch
 CompletionOrderEditor::~CompletionOrderEditor()
 {
     writeConfig();
-    delete d;
 }
 
 void CompletionOrderEditor::readConfig()

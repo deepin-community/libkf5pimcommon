@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -15,9 +15,7 @@ KActionMenuChangeCaseTest::KActionMenuChangeCaseTest(QObject *parent)
 {
 }
 
-KActionMenuChangeCaseTest::~KActionMenuChangeCaseTest()
-{
-}
+KActionMenuChangeCaseTest::~KActionMenuChangeCaseTest() = default;
 
 void KActionMenuChangeCaseTest::shouldHaveDefaultValue()
 {

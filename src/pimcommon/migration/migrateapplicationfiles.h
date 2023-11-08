@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -9,6 +9,8 @@
 #include "migratefileinfo.h"
 #include "pimcommon_export.h"
 #include <QObject>
+#include <memory>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 namespace PimCommon
 {
 class MigrateApplicationFilesPrivate;
@@ -49,6 +51,7 @@ private:
     void migrateFolder(const MigrateFileInfo &info);
     void migrateFile(const MigrateFileInfo &info);
     bool migrateConfig();
-    MigrateApplicationFilesPrivate *const d;
+    std::unique_ptr<MigrateApplicationFilesPrivate> const d;
 };
 }
+#endif

@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2016-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2016-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -38,7 +38,7 @@ ConfigurePluginsWidget::~ConfigurePluginsWidget()
 void ConfigurePluginsWidget::initLayout(ConfigurePluginsListWidget *configurePluginListWidget)
 {
     auto layout = new QVBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins({});
 
     mMessageWidget = new KMessageWidget(i18n("Restart is necessary for applying the changes."), this);
     mMessageWidget->setObjectName(QStringLiteral("mMessageWidget"));

@@ -1,5 +1,5 @@
 /*
-   SPDX-FileCopyrightText: 2017-2021 Laurent Montel <montel@kde.org>
+   SPDX-FileCopyrightText: 2017-2022 Laurent Montel <montel@kde.org>
 
    SPDX-License-Identifier: LGPL-2.0-or-later
 */
@@ -7,23 +7,19 @@
 #include "addressesslineeditpluginmanager.h"
 #include "addressesslineeditabstractplugin.h"
 #include "pimcommonakonadi_debug.h"
-
 #include <KPluginFactory>
-#include <KPluginLoader>
 #include <KPluginMetaData>
 
 #include <QFileInfo>
-#include <QSet>
 
 using namespace PimCommon;
 
 class AddressessLineEditPluginInfo
 {
 public:
-    AddressessLineEditPluginInfo()
-    {
-    }
+    AddressessLineEditPluginInfo() = default;
 
+    KPluginMetaData data;
     QString metaDataFileNameBaseName;
     QString metaDataFileName;
     PimCommon::AddressessLineEditAbstractPlugin *plugin = nullptr;
@@ -47,7 +43,7 @@ public:
     }
 
     void loadPlugin(AddressessLineEditPluginInfo *item);
-    QVector<PimCommon::AddressessLineEditAbstractPlugin *> pluginsList() const;
+    Q_REQUIRED_RESULT QVector<PimCommon::AddressessLineEditAbstractPlugin *> pluginsList() const;
     QVector<AddressessLineEditPluginInfo> mPluginList;
     bool initializePlugins();
 
@@ -60,9 +56,12 @@ bool AddressessLineEditPluginManagerPrivate::initializePlugins()
     if (!mPluginList.isEmpty()) {
         return true;
     }
-    const QVector<KPluginMetaData> plugins = KPluginLoader::findPlugins(QStringLiteral("addressline"));
-
+    const QVector<KPluginMetaData> plugins = KPluginMetaData::findPlugins(QStringLiteral("addressline"));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QVectorIterator<KPluginMetaData> i(plugins);
+#else
+    QListIterator<KPluginMetaData> i(plugins);
+#endif
     i.toBack();
     while (i.hasPrevious()) {
         AddressessLineEditPluginInfo info;
@@ -70,6 +69,7 @@ bool AddressessLineEditPluginManagerPrivate::initializePlugins()
 
         info.metaDataFileNameBaseName = QFileInfo(data.fileName()).baseName();
         info.metaDataFileName = data.fileName();
+        info.data = data;
         if (pluginVersion() == data.version()) {
             info.plugin = nullptr;
             mPluginList.push_back(info);
@@ -86,9 +86,10 @@ bool AddressessLineEditPluginManagerPrivate::initializePlugins()
 
 void AddressessLineEditPluginManagerPrivate::loadPlugin(AddressessLineEditPluginInfo *item)
 {
-    KPluginLoader pluginLoader(item->metaDataFileName);
-    if (pluginLoader.factory()) {
-        item->plugin = pluginLoader.factory()->create<PimCommon::AddressessLineEditAbstractPlugin>(q, QVariantList() << item->metaDataFileNameBaseName);
+    if (auto plugin =
+            KPluginFactory::instantiatePlugin<PimCommon::AddressessLineEditAbstractPlugin>(item->data, q, QVariantList() << item->metaDataFileNameBaseName)
+                .plugin) {
+        item->plugin = plugin;
     }
 }
 
@@ -110,10 +111,7 @@ AddressessLineEditPluginManager::AddressessLineEditPluginManager(QObject *parent
 {
 }
 
-AddressessLineEditPluginManager::~AddressessLineEditPluginManager()
-{
-    delete d;
-}
+AddressessLineEditPluginManager::~AddressessLineEditPluginManager() = default;
 
 AddressessLineEditPluginManager *AddressessLineEditPluginManager::self()
 {

@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -8,8 +8,8 @@
 #include "pimcommonakonadi_debug.h"
 #include "util/pimutil.h"
 
-#include <AkonadiCore/AgentManager>
-#include <AkonadiCore/ServerManager>
+#include <Akonadi/AgentManager>
+#include <Akonadi/ServerManager>
 
 #include <QDBusConnection>
 #include <QDBusInterface>
@@ -23,9 +23,7 @@ ImapResourceCapabilitiesManager::ImapResourceCapabilitiesManager(QObject *parent
     init();
 }
 
-ImapResourceCapabilitiesManager::~ImapResourceCapabilitiesManager()
-{
-}
+ImapResourceCapabilitiesManager::~ImapResourceCapabilitiesManager() = default;
 
 void ImapResourceCapabilitiesManager::slotInstanceAdded(const Akonadi::AgentInstance &instance)
 {

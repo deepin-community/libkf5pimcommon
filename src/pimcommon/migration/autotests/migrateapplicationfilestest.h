@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -13,7 +13,7 @@ class MigrateApplicationFilesTest : public QObject
     Q_OBJECT
 public:
     explicit MigrateApplicationFilesTest(QObject *parent = nullptr);
-    ~MigrateApplicationFilesTest();
+    ~MigrateApplicationFilesTest() override;
 private Q_SLOTS:
     void initTestCase();
     void shouldHaveDefaultValue();
@@ -29,4 +29,3 @@ private Q_SLOTS:
     void cleanup();
     void shouldNotMigrateIfAlreadyDone();
 };
-

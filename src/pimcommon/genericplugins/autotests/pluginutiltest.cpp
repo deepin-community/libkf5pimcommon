@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2016-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2016-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -13,9 +13,7 @@ PluginUtilTest::PluginUtilTest(QObject *parent)
 {
 }
 
-PluginUtilTest::~PluginUtilTest()
-{
-}
+PluginUtilTest::~PluginUtilTest() = default;
 
 void PluginUtilTest::shouldTestIsEnabled_data()
 {

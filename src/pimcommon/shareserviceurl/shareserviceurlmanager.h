@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -9,6 +9,7 @@
 #include "pimcommon_export.h"
 #include <QObject>
 #include <QUrl>
+#include <memory>
 
 class KActionMenu;
 class QAction;
@@ -25,7 +26,16 @@ class PIMCOMMON_EXPORT ShareServiceUrlManager : public QObject
 public:
     explicit ShareServiceUrlManager(QObject *parent = nullptr);
     ~ShareServiceUrlManager() override;
-    enum ServiceType { Fbook = 0, Twitter, MailTo, LinkedIn, Evernote, Pocket, LiveJournal, ServiceEndType };
+    enum ServiceType {
+        Fbook = 0,
+        Twitter,
+        MailTo,
+        LinkedIn,
+        Evernote,
+        Pocket,
+        LiveJournal,
+        ServiceEndType,
+    };
 
     Q_REQUIRED_RESULT KActionMenu *menu() const;
 
@@ -40,7 +50,7 @@ Q_SIGNALS:
     void serviceUrlSelected(PimCommon::ShareServiceUrlManager::ServiceType type);
 
 private:
-    ShareServiceUrlManagerPrivate *const d;
+    std::unique_ptr<ShareServiceUrlManagerPrivate> const d;
 };
 }
 Q_DECLARE_METATYPE(PimCommon::ShareServiceUrlManager::ServiceType)

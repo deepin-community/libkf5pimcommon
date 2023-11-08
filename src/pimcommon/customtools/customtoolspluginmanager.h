@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -8,6 +8,7 @@
 
 #include "pimcommon_export.h"
 #include <QObject>
+#include <memory>
 namespace PimCommon
 {
 class CustomToolsPlugin;
@@ -28,6 +29,6 @@ public:
     Q_REQUIRED_RESULT QVector<PimCommon::CustomToolsPlugin *> pluginsList() const;
 
 private:
-    CustomToolsPluginManagerPrivate *const d;
+    std::unique_ptr<CustomToolsPluginManagerPrivate> const d;
 };
 }

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2011-2021 Laurent Montel <montel@kde.org>
+ * SPDX-FileCopyrightText: 2011-2022 Laurent Montel <montel@kde.org>
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
@@ -31,9 +31,7 @@ SpellCheckLineEdit::SpellCheckLineEdit(QWidget *parent, const QString &configFil
     document()->setDocumentMargin(2);
 }
 
-SpellCheckLineEdit::~SpellCheckLineEdit()
-{
-}
+SpellCheckLineEdit::~SpellCheckLineEdit() = default;
 
 void SpellCheckLineEdit::keyPressEvent(QKeyEvent *e)
 {
@@ -90,12 +88,12 @@ void SpellCheckLineEdit::insertFromMimeData(const QMimeData *source)
             pasteText.replace(QLatin1String("\n\n"), QLatin1String("\n"));
         }
 
-        QRegExp reTopSpace(QStringLiteral("^ *\n"));
+        static const QRegularExpression reTopSpace(QStringLiteral("^ *\n"));
         while (pasteText.contains(reTopSpace)) {
             pasteText.remove(reTopSpace);
         }
 
-        QRegExp reBottomSpace(QStringLiteral("\n *$"));
+        static const QRegularExpression reBottomSpace(QStringLiteral("\n *$"));
         while (pasteText.contains(reBottomSpace)) {
             pasteText.remove(reBottomSpace);
         }

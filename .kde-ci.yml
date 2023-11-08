@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: None
+# SPDX-License-Identifier: CC0-1.0
+
+Dependencies:
+- 'on': ['@all']
+  'require':
+    'frameworks/extra-cmake-modules': '@latest'
+    'frameworks/kcontacts' : '@latest'
+    'frameworks/purpose': '@latest'
+    'pim/akonadi' : '@same'
+    'pim/akonadi-contacts' : '@same'
+    'pim/kimap' : '@same'
+    'pim/kpimtextedit' : '@same'
+    'pim/libkdepim' : '@same'
+    'pim/kldap' : '@same'
+    'frameworks/kbookmarks': '@latest'
+    'frameworks/kconfig': '@latest'
+    'frameworks/kconfigwidgets': '@latest'
+    'frameworks/kcrash': '@latest'
+    'frameworks/kdbusaddons': '@latest'
+    'frameworks/kdoctools': '@latest'
+    'frameworks/kguiaddons': '@latest'
+    'frameworks/ki18n': '@latest'
+    'frameworks/kitemviews': '@latest'
+    'frameworks/kjobwidgets': '@latest'
+    'frameworks/kio': '@latest'
+    'frameworks/kcmutils': '@latest'
+    'frameworks/knotifications': '@latest'
+    'frameworks/knotifyconfig': '@latest'
+    'frameworks/kparts': '@latest'
+    'frameworks/kservice': '@latest'
+    'frameworks/sonnet': '@latest'
+    'frameworks/ktextwidgets': '@latest'
+    'frameworks/kwidgetsaddons': '@latest'
+    'frameworks/kwindowsystem': '@latest'
+    'frameworks/kxmlgui': '@latest'
+    'frameworks/kiconthemes': '@latest'
+    'frameworks/kcalendarcore': '@latest'
+
+- 'on': ['Linux', 'FreeBSD', 'macOS']
+  'require':
+    'pim/akonadi-search' : '@same'
+
+Options:
+  require-passing-tests-on: [ 'Linux/Qt5', 'FreeBSD/Qt5' ]

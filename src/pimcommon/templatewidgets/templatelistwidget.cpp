@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -11,7 +11,7 @@
 #include <KConfigGroup>
 #include <KLocalizedString>
 #include <KMessageBox>
-#include <KNewStuff3/KNS3/QtQuickDialogWrapper>
+#include <KNSWidgets/Action>
 #include <KSharedConfig>
 #include <QIcon>
 #include <QMenu>
@@ -21,6 +21,7 @@
 #include <QListWidgetItem>
 #include <QMimeData>
 #include <QPointer>
+#include <kwidgetsaddons_version.h>
 
 namespace PimCommon
 {
@@ -71,7 +72,20 @@ public:
 
     void slotRemove()
     {
-        if (KMessageBox::Yes == KMessageBox::questionYesNo(q, i18n("Do you want to delete selected template?"), i18n("Delete template"))) {
+#if KWIDGETSADDONS_VERSION >= QT_VERSION_CHECK(5, 100, 0)
+        const int answer = KMessageBox::questionTwoActions(q,
+#else
+        const int answer = KMessageBox::questionYesNo(q,
+#endif
+                                                           i18n("Do you want to delete selected template?"),
+                                                           i18n("Delete template"),
+                                                           KStandardGuiItem::del(),
+                                                           KStandardGuiItem::cancel());
+#if KWIDGETSADDONS_VERSION >= QT_VERSION_CHECK(5, 100, 0)
+        if (answer == KMessageBox::ButtonCode::PrimaryAction) {
+#else
+        if (answer == KMessageBox::Yes) {
+#endif
             const QList<QListWidgetItem *> lstSelectedItems = q->selectedItems();
             for (QListWidgetItem *item : lstSelectedItems) {
                 if (item->data(TemplateListWidget::DefaultTemplate).toBool() == false) {
@@ -173,9 +187,9 @@ public:
                 menu->addAction(defaultTemplate ? i18n("Show...") : i18n("Modify..."), q, [this]() {
                     slotModify();
                 });
-                menu->addAction(QIcon::fromTheme(QStringLiteral("edit-copy")),
-                                i18n("Duplicate"), q,
-                                [this]() { slotDuplicate(); });
+                menu->addAction(QIcon::fromTheme(QStringLiteral("edit-copy")), i18n("Duplicate"), q, [this]() {
+                    slotDuplicate();
+                });
             }
             if (lstSelectedItems.count() == 1 && !defaultTemplate) {
                 menu->addSeparator();
@@ -197,12 +211,10 @@ public:
         if (KAuthorized::authorize(QStringLiteral("ghns"))) {
             if (!knewstuffConfigName.isEmpty()) {
                 menu->addSeparator();
-                menu->addAction(QIcon::fromTheme(QStringLiteral("get-hot-new-stuff")), i18n("Download new Templates..."), q, [this]() {
-                    slotDownloadTemplates();
-                });
+                auto fileGHNS = new KNSWidgets::Action(i18n("Download new Templates..."), knewstuffConfigName, q);
+                menu->addAction(fileGHNS);
             }
         }
-
         menu->exec(q->mapToGlobal(pos));
         delete menu;
     }
@@ -260,11 +272,6 @@ public:
         configFile->sync();
     }
 
-    void slotDownloadTemplates()
-    {
-        KNS3::QtQuickDialogWrapper(knewstuffConfigName).exec();
-    }
-
     void save()
     {
         if (!dirty) {
@@ -299,10 +306,7 @@ TemplateListWidget::TemplateListWidget(const QString &configName, QWidget *paren
     });
 }
 
-TemplateListWidget::~TemplateListWidget()
-{
-    delete d;
-}
+TemplateListWidget::~TemplateListWidget() = default;
 
 void TemplateListWidget::loadTemplates()
 {
@@ -311,7 +315,7 @@ void TemplateListWidget::loadTemplates()
 
 QVector<defaultTemplate> TemplateListWidget::defaultTemplates()
 {
-    return QVector<PimCommon::defaultTemplate>();
+    return {};
 }
 
 QStringList TemplateListWidget::mimeTypes() const
@@ -320,7 +324,11 @@ QStringList TemplateListWidget::mimeTypes() const
     return lst;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 QMimeData *TemplateListWidget::mimeData(const QList<QListWidgetItem *> items) const
+#else
+QMimeData *TemplateListWidget::mimeData(const QList<QListWidgetItem *> &items) const
+#endif
 {
     if (items.isEmpty()) {
         return nullptr;

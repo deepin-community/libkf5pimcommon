@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2014-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2014-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -8,7 +8,7 @@
 #include "pimcommonakonadi_debug.h"
 #include "util/mailutil.h"
 
-#include <AkonadiCore/ServerManager>
+#include <Akonadi/ServerManager>
 
 #include <KLocalizedString>
 #include <KMessageBox>
@@ -23,9 +23,7 @@ using namespace PimCommon;
 class PimCommon::ManageServerSideSubscriptionJobPrivate
 {
 public:
-    ManageServerSideSubscriptionJobPrivate()
-    {
-    }
+    ManageServerSideSubscriptionJobPrivate() = default;
 
     Akonadi::Collection mCurrentCollection;
     QWidget *mParentWidget = nullptr;
@@ -37,10 +35,7 @@ ManageServerSideSubscriptionJob::ManageServerSideSubscriptionJob(QObject *parent
 {
 }
 
-ManageServerSideSubscriptionJob::~ManageServerSideSubscriptionJob()
-{
-    delete d;
-}
+ManageServerSideSubscriptionJob::~ManageServerSideSubscriptionJob() = default;
 
 void ManageServerSideSubscriptionJob::start()
 {
@@ -79,7 +74,6 @@ void ManageServerSideSubscriptionJob::slotConfigureSubscriptionFinished(QDBusPen
         qCDebug(PIMCOMMONAKONADI_LOG) << "ManageServerSideSubscriptionJob return an invalid reply";
     }
     watcher->deleteLater();
-    watcher = nullptr;
     deleteLater();
 }
 

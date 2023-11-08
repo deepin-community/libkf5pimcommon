@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -25,7 +25,6 @@ private:
     void slotSaveAs();
     void readConfig();
     void writeConfig();
-    KPIMTextEdit::PlainTextEditorWidget *mEdit = nullptr;
-    QPushButton *mUser1Button = nullptr;
+    KPIMTextEdit::PlainTextEditorWidget *const mEdit;
+    QPushButton *const mUser1Button;
 };
-

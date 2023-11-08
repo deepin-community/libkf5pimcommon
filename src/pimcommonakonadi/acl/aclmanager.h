@@ -9,7 +9,7 @@
 
 #include "pimcommonakonadi_private_export.h"
 
-#include <Collection>
+#include <Akonadi/Collection>
 
 #include <QObject>
 
@@ -97,9 +97,8 @@ Q_SIGNALS:
 
 private:
     //@cond PRIVATE
-    class Private;
-    Private *const d;
+    class AclManagerPrivate;
+    std::unique_ptr<AclManagerPrivate> const d;
     //@endcond
 };
 }
-

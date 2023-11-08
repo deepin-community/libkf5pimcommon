@@ -1,12 +1,11 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
 */
 
 #include "blacklistbalooemaillist.h"
-#include "pimcommonakonadi_debug.h"
 
 #include <KEmailAddress>
 #include <KLocalizedString>
@@ -21,9 +20,7 @@ BlackListBalooEmailList::BlackListBalooEmailList(QWidget *parent)
     setSortingEnabled(true);
 }
 
-BlackListBalooEmailList::~BlackListBalooEmailList()
-{
-}
+BlackListBalooEmailList::~BlackListBalooEmailList() = default;
 
 void BlackListBalooEmailList::changeEvent(QEvent *event)
 {
@@ -66,7 +63,8 @@ int BlackListBalooEmailList::setEmailFound(const QStringList &list)
     QStringList onlyEmails;
     for (const QString &mail : list) {
         bool excludeDomain = false;
-        QString email, name;
+        QString email;
+        QString name;
         KEmailAddress::extractEmailAddressAndName(mail, email, name);
 
         const QString mailToLower = mail.toLower();
@@ -132,9 +130,7 @@ BlackListBalooEmailListItem::BlackListBalooEmailListItem(QListWidget *parent)
     setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
 }
 
-BlackListBalooEmailListItem::~BlackListBalooEmailListItem()
-{
-}
+BlackListBalooEmailListItem::~BlackListBalooEmailListItem() = default;
 
 bool BlackListBalooEmailListItem::initializeStatus() const
 {

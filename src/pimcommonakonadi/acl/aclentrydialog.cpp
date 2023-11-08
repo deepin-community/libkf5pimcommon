@@ -10,7 +10,7 @@
 
 #include <PimCommonAkonadi/AddresseeLineEdit>
 
-#include <Akonadi/Contact/EmailAddressSelectionDialog>
+#include <Akonadi/EmailAddressSelectionDialog>
 
 #include <KLocalizedString>
 
@@ -25,10 +25,10 @@
 
 using namespace PimCommon;
 
-class AclEntryDialog::Private
+class AclEntryDialog::AclEntryDialogPrivate
 {
 public:
-    Private(AclEntryDialog *qq)
+    AclEntryDialogPrivate(AclEntryDialog *qq)
         : q(qq)
     {
     }
@@ -44,12 +44,12 @@ public:
     QPushButton *mOkButton = nullptr;
 };
 
-void AclEntryDialog::Private::slotChanged()
+void AclEntryDialog::AclEntryDialogPrivate::slotChanged()
 {
     mOkButton->setEnabled(!mUserIdLineEdit->text().trimmed().isEmpty() && mButtonGroup->checkedButton() != nullptr);
 }
 
-void AclEntryDialog::Private::slotSelectAddresses()
+void AclEntryDialog::AclEntryDialogPrivate::slotSelectAddresses()
 {
     Akonadi::EmailAddressSelectionDialog dlg;
 
@@ -64,7 +64,7 @@ void AclEntryDialog::Private::slotSelectAddresses()
 
 AclEntryDialog::AclEntryDialog(QWidget *parent)
     : QDialog(parent)
-    , d(new Private(this))
+    , d(new AclEntryDialogPrivate(this))
 {
     auto mainLayout = new QVBoxLayout(this);
     auto buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
@@ -79,7 +79,7 @@ AclEntryDialog::AclEntryDialog(QWidget *parent)
     mainLayout->addWidget(buttonBox);
 
     auto layout = new QGridLayout(page);
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins({});
 
     auto label = new QLabel(i18n("&User identifier:"), page);
     layout->addWidget(label, 0, 0);
@@ -121,7 +121,7 @@ AclEntryDialog::AclEntryDialog(QWidget *parent)
     connect(button, &QPushButton::clicked, this, [this]() {
         d->slotSelectAddresses();
     });
-    connect(d->mButtonGroup, QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this, [this]() {
+    connect(d->mButtonGroup, &QButtonGroup::buttonClicked, this, [this]() {
         d->slotChanged();
     });
 
@@ -130,10 +130,7 @@ AclEntryDialog::AclEntryDialog(QWidget *parent)
     d->mUserIdLineEdit->setFocus();
 }
 
-AclEntryDialog::~AclEntryDialog()
-{
-    delete d;
-}
+AclEntryDialog::~AclEntryDialog() = default;
 
 void AclEntryDialog::setUserId(const QString &userId)
 {

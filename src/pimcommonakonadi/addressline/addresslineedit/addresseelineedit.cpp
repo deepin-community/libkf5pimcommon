@@ -7,7 +7,7 @@
   SPDX-FileCopyrightText: 2001 Waldo Bastian <bastian@kde.org>
   SPDX-FileCopyrightText: 2004 Daniel Molkentin <danimo@klaralvdalens-datakonsult.se>
   SPDX-FileCopyrightText: 2004 Karl-Heinz Zimmer <khz@klaralvdalens-datakonsult.se>
-  SPDX-FileCopyrightText: 2017-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2017-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 */
@@ -21,17 +21,17 @@
 
 #include <KContacts/VCardConverter>
 
-#include <Job>
+#include <Akonadi/Job>
 #include <KConfigGroup>
 #include <QUrl>
 
-#include <Akonadi/Contact/ContactGroupExpandJob>
-#include <Akonadi/Contact/ContactGroupSearchJob>
+#include <Akonadi/ContactGroupExpandJob>
+#include <Akonadi/ContactGroupSearchJob>
 #include <KColorScheme>
+#include <KContacts/ContactGroupTool>
 #include <KEmailAddress>
 #include <KIO/StoredTransferJob>
 #include <KJobWidgets>
-#include <kcontacts/contactgrouptool.h>
 
 #include "pimcommonakonadi_debug.h"
 #include <KCodecs>
@@ -39,7 +39,8 @@
 #include <KLocalizedString>
 #include <KStandardShortcut>
 
-#include <ContactGroupExpandJob>
+#include <Akonadi/ContactGroupExpandJob>
+#include <KContacts/VCardDrag>
 #include <KMessageBox>
 #include <KSharedConfig>
 #include <QApplication>
@@ -53,7 +54,6 @@
 #include <QMouseEvent>
 #include <QObject>
 #include <addressline/completionconfiguredialog/completionconfiguredialog.h>
-#include <kcontacts/vcarddrag.h>
 
 using namespace PimCommon;
 
@@ -78,7 +78,9 @@ AddresseeLineEdit::AddresseeLineEdit(QWidget *parent, bool enableCompletion)
     : KLineEdit(parent)
     , d(new AddresseeLineEditPrivate(this, enableCompletion))
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     setUrlDropsEnabled(false);
+#endif
 
     setObjectName(newLineEditObjectName());
     setPlaceholderText(QString());
@@ -298,7 +300,9 @@ void AddresseeLineEdit::dropEvent(QDropEvent *event)
             // email-address.
             if (url.scheme() == QLatin1String("mailto")) {
                 KContacts::Addressee addressee;
-                addressee.insertEmail(KEmailAddress::decodeMailtoUrl(url), true /* preferred */);
+                KContacts::Email email(KEmailAddress::decodeMailtoUrl(url));
+                email.setPreferred(true);
+                addressee.addEmail(email);
                 list += addressee;
             } else { // Otherwise, download the vCard to which the Url points
                 KContacts::VCardConverter converter;
@@ -380,7 +384,9 @@ void AddresseeLineEdit::dropEvent(QDropEvent *event)
                             QUrl url(dropData);
                             if (url.scheme() == QLatin1String("mailto")) {
                                 KContacts::Addressee addressee;
-                                addressee.insertEmail(KEmailAddress::decodeMailtoUrl(url), true /* preferred */);
+                                KContacts::Email email(KEmailAddress::decodeMailtoUrl(url));
+                                email.setPreferred(true);
+                                addressee.addEmail(email);
                                 insertEmails(addressee.emails());
                             } else {
                                 setText(KEmailAddress::normalizeAddressesAndDecodeIdn(dropData));
@@ -621,7 +627,8 @@ void AddresseeLineEdit::loadContacts()
     if (showRecentAddresses()) {
         const QStringList recent =
             AddresseeLineEditManager::self()->cleanupRecentAddressEmailList(PimCommon::RecentAddresses::self(recentAddressConfig())->addresses());
-        QString name, email;
+        QString name;
+        QString emailString;
 
         KSharedConfig::Ptr config = KSharedConfig::openConfig(QStringLiteral("kpimcompletionorder"));
         KConfigGroup group(config, "CompletionWeights");
@@ -631,8 +638,8 @@ void AddresseeLineEdit::loadContacts()
 
         for (const QString &recentAdr : recent) {
             KContacts::Addressee addr;
-            KEmailAddress::extractEmailAddressAndName(recentAdr, email, name);
-            if (email.isEmpty()) {
+            KEmailAddress::extractEmailAddressAndName(recentAdr, emailString, name);
+            if (emailString.isEmpty()) {
                 continue;
             }
             name = KEmailAddress::quoteNameIfNecessary(name);
@@ -641,8 +648,10 @@ void AddresseeLineEdit::loadContacts()
                 name.chop(1);
             }
             addr.setNameFromString(name);
-            addr.insertEmail(email, true);
-            addContact({email}, addr, weight, idx);
+            KContacts::Email email(emailString);
+            email.setPreferred(true);
+            addr.addEmail(email);
+            addContact({emailString}, addr, weight, idx);
         }
     } else {
         removeCompletionSource(recentAddressGroupName);

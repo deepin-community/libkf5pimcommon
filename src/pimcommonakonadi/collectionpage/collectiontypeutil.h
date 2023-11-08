@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2014-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2014-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
@@ -39,7 +39,11 @@ public:
         ContentsTypeLast = ContentsTypeFile
     };
 
-    enum IncidencesFor { IncForNobody, IncForAdmins, IncForReaders };
+    enum IncidencesFor {
+        IncForNobody,
+        IncForAdmins,
+        IncForReaders,
+    };
 
     Q_REQUIRED_RESULT CollectionTypeUtil::IncidencesFor incidencesForFromString(const QString &string);
     Q_REQUIRED_RESULT CollectionTypeUtil::FolderContentsType typeFromKolabName(const QByteArray &name);

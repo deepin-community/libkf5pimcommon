@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -19,9 +19,7 @@ using namespace PimCommon;
 class PimCommon::SelectMultiCollectionDialogPrivate
 {
 public:
-    SelectMultiCollectionDialogPrivate()
-    {
-    }
+    SelectMultiCollectionDialogPrivate() = default;
 
     SelectMultiCollectionWidget *mSelectMultiCollection = nullptr;
 };
@@ -43,7 +41,6 @@ SelectMultiCollectionDialog::SelectMultiCollectionDialog(const QString &mimetype
 SelectMultiCollectionDialog::~SelectMultiCollectionDialog()
 {
     writeConfig();
-    delete d;
 }
 
 void SelectMultiCollectionDialog::initialize(const QString &mimetype, const QList<Akonadi::Collection::Id> &selectedCollection)

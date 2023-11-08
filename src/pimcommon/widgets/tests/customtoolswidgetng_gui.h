@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -17,9 +17,8 @@ class CustomToolWidgetNgTest : public QWidget
     Q_OBJECT
 public:
     explicit CustomToolWidgetNgTest(QWidget *parent = nullptr);
-    ~CustomToolWidgetNgTest();
+    ~CustomToolWidgetNgTest() override;
 
 private:
     PimCommon::CustomToolsWidgetNg *mCustomTools;
 };
-

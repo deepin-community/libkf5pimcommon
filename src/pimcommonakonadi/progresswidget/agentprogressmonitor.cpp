@@ -6,7 +6,7 @@
 
 #include "agentprogressmonitor.h"
 
-#include <AgentManager>
+#include <Akonadi/AgentManager>
 
 using namespace Akonadi;
 using namespace PimCommon;
@@ -28,9 +28,7 @@ AgentProgressMonitor::AgentProgressMonitor(const AgentInstance &agent, KPIM::Pro
     // TODO handle offline case
 }
 
-AgentProgressMonitor::~AgentProgressMonitor()
-{
-}
+AgentProgressMonitor::~AgentProgressMonitor() = default;
 
 void AgentProgressMonitor::abort()
 {

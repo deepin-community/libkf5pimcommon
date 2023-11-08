@@ -1,18 +1,16 @@
 /*
-  SPDX-FileCopyrightText: 2014-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2014-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 #include "lineeditwithautocorrectiontest.h"
-#include "../autocorrection.h"
 #include <PimCommon/LineEditWithAutoCorrection>
+#include <PimCommonAutoCorrection/AutoCorrection>
 #include <QTest>
 #include <qtestkeyboard.h>
 
-LineEditWithAutocorrectionTest::LineEditWithAutocorrectionTest()
-{
-}
+LineEditWithAutocorrectionTest::LineEditWithAutocorrectionTest() = default;
 
 void LineEditWithAutocorrectionTest::shouldNotAutocorrectWhenDisabled()
 {
@@ -21,7 +19,9 @@ void LineEditWithAutocorrectionTest::shouldNotAutocorrectWhenDisabled()
     const QString originalWord = QStringLiteral("FOOFOO");
     const QString replaceWord = QStringLiteral("BLABLA");
     entries.insert(originalWord, replaceWord);
-    lineedit.autocorrection()->setAutocorrectEntries(entries);
+    auto settings = new PimCommonAutoCorrection::AutoCorrectionSettings;
+    settings->setAutocorrectEntries(entries);
+    lineedit.autocorrection()->setAutoCorrectionSettings(settings);
     lineedit.show();
     QVERIFY(QTest::qWaitForWindowExposed(&lineedit));
     QTest::keyClicks(&lineedit, originalWord);
@@ -36,9 +36,11 @@ void LineEditWithAutocorrectionTest::shouldReplaceWordWhenExactText()
     const QString replaceWord = QStringLiteral("BLABLA");
     QHash<QString, QString> entries;
     entries.insert(originalWord, replaceWord);
-    lineedit.autocorrection()->setAutocorrectEntries(entries);
-    lineedit.autocorrection()->setEnabledAutoCorrection(true);
-    lineedit.autocorrection()->setAdvancedAutocorrect(true);
+    auto settings = new PimCommonAutoCorrection::AutoCorrectionSettings;
+    settings->setAutocorrectEntries(entries);
+    settings->setEnabledAutoCorrection(true);
+    settings->setAdvancedAutocorrect(true);
+    lineedit.autocorrection()->setAutoCorrectionSettings(settings);
     lineedit.show();
     QVERIFY(QTest::qWaitForWindowExposed(&lineedit));
     QTest::keyClicks(&lineedit, originalWord);
@@ -53,9 +55,11 @@ void LineEditWithAutocorrectionTest::shouldNotReplaceWordWhenInexactText()
     const QString replaceWord = QStringLiteral("BLABLA");
     QHash<QString, QString> entries;
     entries.insert(originalWord, replaceWord);
-    lineedit.autocorrection()->setAutocorrectEntries(entries);
-    lineedit.autocorrection()->setEnabledAutoCorrection(true);
-    lineedit.autocorrection()->setAdvancedAutocorrect(true);
+    auto settings = new PimCommonAutoCorrection::AutoCorrectionSettings;
+    settings->setAutocorrectEntries(entries);
+    settings->setEnabledAutoCorrection(true);
+    settings->setAdvancedAutocorrect(true);
+    lineedit.autocorrection()->setAutoCorrectionSettings(settings);
     lineedit.show();
     const QString nonExactText = QStringLiteral("BLIBLI");
     QVERIFY(QTest::qWaitForWindowExposed(&lineedit));
@@ -68,8 +72,10 @@ void LineEditWithAutocorrectionTest::shouldNotAddTwoSpace()
 {
     PimCommon::LineEditWithAutoCorrection lineedit(nullptr, QStringLiteral("lineeditwithautocorrecttestrc"));
     const QString originalWord = QStringLiteral("FOOFOO ");
-    lineedit.autocorrection()->setSingleSpaces(true);
-    lineedit.autocorrection()->setEnabledAutoCorrection(true);
+    auto settings = new PimCommonAutoCorrection::AutoCorrectionSettings;
+    settings->setSingleSpaces(true);
+    settings->setEnabledAutoCorrection(true);
+    lineedit.autocorrection()->setAutoCorrectionSettings(settings);
     lineedit.show();
     QVERIFY(QTest::qWaitForWindowExposed(&lineedit));
     QTest::keyClicks(&lineedit, originalWord);

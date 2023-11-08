@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -20,10 +20,7 @@ CustomToolsPlugin::CustomToolsPlugin(QObject *parent)
 {
 }
 
-CustomToolsPlugin::~CustomToolsPlugin()
-{
-    delete d;
-}
+CustomToolsPlugin::~CustomToolsPlugin() = default;
 
 bool CustomToolsPlugin::hasConfigureDialog() const
 {

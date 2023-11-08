@@ -30,13 +30,10 @@ public:
     explicit CompletionOrderEditor(KLDAP::LdapClientSearch *ldapSearch, QWidget *parent = nullptr);
     ~CompletionOrderEditor() override;
 
-private Q_SLOTS:
-    void slotOk();
-
 private:
+    void slotOk();
     void readConfig();
     void writeConfig();
-    CompletionOrderEditorPrivate *const d;
+    std::unique_ptr<CompletionOrderEditorPrivate> const d;
 };
 } // namespace
-

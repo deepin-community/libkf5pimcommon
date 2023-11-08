@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -12,39 +12,41 @@
 
 #include <QTextEdit>
 
-namespace PimCommon
+namespace PimCommonAutoCorrection
 {
 class AutoCorrection;
 class AutoCorrectionWidget;
+}
+namespace PimCommon
+{
 class LineEditWithAutoCorrection;
 }
-
 class ConfigureTestDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ConfigureTestDialog(PimCommon::AutoCorrection *autoCorrection, QWidget *parent = nullptr);
-    ~ConfigureTestDialog();
+    explicit ConfigureTestDialog(PimCommonAutoCorrection::AutoCorrection *autoCorrection, QWidget *parent = nullptr);
+    ~ConfigureTestDialog() override;
 
 private Q_SLOTS:
     void slotSaveSettings();
 
 private:
-    PimCommon::AutoCorrectionWidget *mWidget = nullptr;
+    PimCommonAutoCorrection::AutoCorrectionWidget *mWidget = nullptr;
 };
 
 class TextEditAutoCorrectionWidget : public QTextEdit
 {
     Q_OBJECT
 public:
-    explicit TextEditAutoCorrectionWidget(PimCommon::AutoCorrection *autoCorrection, QWidget *parent = nullptr);
+    explicit TextEditAutoCorrectionWidget(PimCommonAutoCorrection::AutoCorrection *autoCorrection, QWidget *parent = nullptr);
     ~TextEditAutoCorrectionWidget() override;
 
 protected:
     void keyPressEvent(QKeyEvent *e) override;
 
 private:
-    PimCommon::AutoCorrection *mAutoCorrection = nullptr;
+    PimCommonAutoCorrection::AutoCorrection *mAutoCorrection = nullptr;
 };
 
 class AutocorrectionTestWidget : public QWidget
@@ -52,7 +54,7 @@ class AutocorrectionTestWidget : public QWidget
     Q_OBJECT
 public:
     explicit AutocorrectionTestWidget(QWidget *parent = nullptr);
-    ~AutocorrectionTestWidget();
+    ~AutocorrectionTestWidget() override;
 
 private Q_SLOTS:
     void slotConfigure();
@@ -61,7 +63,6 @@ private Q_SLOTS:
 private:
     TextEditAutoCorrectionWidget *mEdit = nullptr;
     PimCommon::LineEditWithAutoCorrection *mSubject = nullptr;
-    PimCommon::AutoCorrection *mAutoCorrection = nullptr;
+    PimCommonAutoCorrection::AutoCorrection *mAutoCorrection = nullptr;
     KSharedConfig::Ptr mConfig;
 };
-

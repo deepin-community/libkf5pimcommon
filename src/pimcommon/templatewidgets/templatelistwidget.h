@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -42,10 +42,16 @@ public:
 
 protected:
     QStringList mimeTypes() const override;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QMimeData *mimeData(const QList<QListWidgetItem *> items) const override;
-
+#else
+    QMimeData *mimeData(const QList<QListWidgetItem *> &items) const override;
+#endif
     void dropEvent(QDropEvent *event) override;
-    enum TemplateData { Text = Qt::UserRole + 1, DefaultTemplate = Qt::UserRole + 2 };
+    enum TemplateData {
+        Text = Qt::UserRole + 1,
+        DefaultTemplate = Qt::UserRole + 2,
+    };
 
 Q_SIGNALS:
     void insertTemplate(const QString &);
@@ -53,7 +59,7 @@ Q_SIGNALS:
 
 private:
     friend class TemplateListWidgetPrivate;
-    TemplateListWidgetPrivate *const d;
+    std::unique_ptr<TemplateListWidgetPrivate> const d;
 };
 }
 Q_DECLARE_TYPEINFO(PimCommon::defaultTemplate, Q_MOVABLE_TYPE);

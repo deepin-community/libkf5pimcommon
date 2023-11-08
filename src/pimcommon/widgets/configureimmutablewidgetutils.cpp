@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -23,15 +23,13 @@
 
 using namespace PimCommon;
 
-static const char lockedDownWarning[] = I18N_NOOP(
-    "<qt><p>This setting has been fixed by your administrator.</p>"
-    "<p>If you think this is an error, please contact him.</p></qt>");
-
 void ConfigureImmutableWidgetUtils::checkLockDown(QWidget *w, const KConfigSkeletonItem *item)
 {
     if (item->isImmutable()) {
         w->setEnabled(false);
-        w->setToolTip(i18n(lockedDownWarning));
+        w->setToolTip(
+            i18n("<qt><p>This setting has been fixed by your administrator.</p>"
+                 "<p>If you think this is an error, please contact him.</p></qt>"));
     }
 }
 

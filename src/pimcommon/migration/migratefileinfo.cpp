@@ -1,15 +1,13 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 #include "migratefileinfo.h"
 using namespace PimCommon;
-
-MigrateFileInfo::MigrateFileInfo()
-{
-}
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+MigrateFileInfo::MigrateFileInfo() = default;
 
 bool MigrateFileInfo::isValid() const
 {
@@ -65,3 +63,4 @@ void MigrateFileInfo::setFilePatterns(const QStringList &filePattern)
 {
     mFilePattern = filePattern;
 }
+#endif

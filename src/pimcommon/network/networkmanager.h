@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2016-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2016-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -8,7 +8,9 @@
 
 #include "pimcommon_export.h"
 #include <QObject>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 class QNetworkConfigurationManager;
+#endif
 namespace PimCommon
 {
 /**
@@ -23,10 +25,14 @@ public:
     ~NetworkManager() override;
     static NetworkManager *self();
 
-    Q_REQUIRED_RESULT QNetworkConfigurationManager *networkConfigureManager() const;
+    Q_REQUIRED_RESULT bool isOnline() const;
+
+Q_SIGNALS:
+    void networkStatusChanged(bool isOnline);
 
 private:
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QNetworkConfigurationManager *const mNetworkConfigureManager;
+#endif
 };
 }
-

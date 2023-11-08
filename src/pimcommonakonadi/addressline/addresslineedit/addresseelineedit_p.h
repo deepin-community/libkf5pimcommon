@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -10,9 +10,9 @@
 #include <QObject>
 #include <QStringList>
 
-#include <AkonadiCore/Collection>
-#include <AkonadiCore/Item>
-#include <kcontacts/contactgroup.h>
+#include <Akonadi/Collection>
+#include <Akonadi/Item>
+#include <KContacts/ContactGroup>
 
 class KConfig;
 class QToolButton;
@@ -143,4 +143,3 @@ private:
     bool mCanDeleteLineEdit = true;
 };
 }
-

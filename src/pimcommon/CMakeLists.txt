@@ -1,4 +1,16 @@
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileCopyrightText: none
 set(CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/KF5PimCommon")
+
+if (BUILD_QCH)
+    ecm_install_qch_export(
+        TARGETS KF5PimCommon_QCH
+        FILE KF5PimCommonQchTargets.cmake
+        DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+        COMPONENT Devel
+    )
+    set(PACKAGE_INCLUDE_QCHTARGETS "include(\"\${CMAKE_CURRENT_LIST_DIR}/KF5PimCommonQchTargets.cmake\")")
+endif()
 
 configure_package_config_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/KF5PimCommonConfig.cmake.in"
@@ -24,175 +36,170 @@ install(EXPORT KF5PimCommonTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}" FILE
 
 install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/pimcommon_version.h
-    DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5} COMPONENT Devel
-    )
-
-set(libpimcommon_autocorrection_SRCS
-    autocorrection/autocorrection.cpp
-    autocorrection/autocorrectionwidget.cpp
-    autocorrection/autocorrectionlistwidget.cpp
-    autocorrection/autocorrectiontreewidget.cpp
-    autocorrection/autocorrectionlanguage.cpp
-    autocorrection/import/importlibreofficeautocorrection.cpp
-    autocorrection/import/importkmailautocorrection.cpp
-    autocorrection/import/importabstractautocorrection.cpp
-    autocorrection/widgets/lineeditwithautocorrection.cpp
-    autocorrection/widgets/richtexteditwithautocorrection.cpp
-    )
-
-set(libpimcommon_generericplugin_SRCS
-    genericplugins/pluginutil.cpp
-    genericplugins/genericpluginmanager.cpp
-    genericplugins/genericplugin.cpp
-    genericplugins/abstractgenericplugin.cpp
-    genericplugins/abstractgenericplugininterface.cpp
+    DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/PimCommon/ COMPONENT Devel
     )
 
 
-set(libpimcommon_configure_plugins_SRCS
-    configureplugins/configurepluginslistwidget.cpp
-    configureplugins/configurepluginswidget.cpp
-    configureplugins/configureplugindialog.cpp
-    )
-
-set(libpimcommon_translator_SRCS
-    translator/translatorutil.cpp
-    translator/translatorwidget.cpp
-    translator/translatordebugdialog.cpp
-    translator/googletranslator.cpp
-    )
-
-set(libpimcommon_templatewidgets_SRCS
-    templatewidgets/templatelistwidget.cpp
-    templatewidgets/templateeditdialog.cpp
-    templatewidgets/templatemanager.cpp
-    )
 
 
-set(libpimcommon_widgets_SRCS
-    widgets/renamefiledialog.cpp
-    widgets/simplestringlisteditor.cpp
-    widgets/customtreeview.cpp
-    widgets/configureimmutablewidgetutils.cpp
-    widgets/kactionmenuchangecase.cpp
-    widgets/spellchecklineedit.cpp
-    widgets/kpimprintpreviewdialog.cpp
-    widgets/lineeditwithcompleterng.cpp
-    widgets/purposemenuwidget.cpp
-    widgets/customlogwidget.cpp
-    )
-
-set(libpimcommon_customtools_SRCS
-    customtools/customtoolsplugin.cpp
-    customtools/customtoolspluginmanager.cpp
-    customtools/customtoolswidgetng.cpp
-    customtools/customtoolsviewinterface.cpp
-    )
-
-set(libpimcommon_util_SRCS
-    util/pimutil.cpp
-    util/broadcaststatus.cpp
-    )
-
-set(libpimcommon_migrate_SRCS
-    migration/migrateapplicationfiles.cpp
-    migration/migratefileinfo.cpp
-    )
-
-set(libpimcommon_shareserviceurl_SRCS
-    shareserviceurl/shareserviceurlmanager.cpp
-    )
-
-set(libpimcommon_logactivities_SRCS
-    logactivities/logactivitiesmanager.cpp
-    logactivities/logactivitiesdialog.cpp
-    logactivities/logactivitieswidget.cpp
-    logactivities/logactivitiespurposemenuwidget.cpp
-    )
-
-
-set(libpimcommon_networkmanager_SRCS
-    network/networkmanager.cpp
-    )
-
-set(libpimcommon_misc_SRCS
-    misc/emailvalidator.cpp
-    )
-
-
-set(libpimcommon_SRCS
-    settings/pimcommonsettings.cpp
-    ${libpimcommon_misc_SRCS}
-    ${libpimcommon_configure_plugins_SRCS}
-    ${libpimcommon_networkmanager_SRCS}
-    ${libpimcommon_configure_plugins_SRCS}
-    ${libpimcommon_shareserviceurl_SRCS}
-    ${libpimcommon_migrate_SRCS}
-    ${libpimcommon_util_SRCS}
-    ${libpimcommon_texteditor_SRCS}
-    ${libpimcommon_storageservice_SRCS}
-    ${libpimcommon_autocorrection_SRCS}
-    ${libpimcommon_translator_SRCS}
-    ${libpimcommon_templatewidgets_SRCS}
-    ${libpimcommon_widgets_SRCS}
-    ${libpimcommon_customtools_SRCS}
-    ${libpimcommon_logactivities_SRCS}
-    ${libpimcommon_generericplugin_SRCS}
-    widgets/icons.qrc
-    )
-ecm_qt_declare_logging_category(libpimcommon_SRCS HEADER pimcommon_debug.h IDENTIFIER PIMCOMMON_LOG CATEGORY_NAME org.kde.pim.pimcommon
-        DESCRIPTION "kdepim (pimcommon)"
-        OLD_CATEGORY_NAMES log_pimcommon
-        EXPORT PIMCOMMON
-    )
-
-
-ki18n_wrap_ui(libpimcommon_SRCS
-    autocorrection/ui/autocorrectionwidget.ui
-    )
-
-macro(add_resource_iface _kcfgFile _ifaceName _className _fileName)
+macro(add_resource_iface _kcfgFile _ifaceName _className)
     kcfg_generate_dbus_interface(${CMAKE_CURRENT_SOURCE_DIR}/${_kcfgFile} ${_ifaceName})
     qt_add_dbus_interface(libpimcommon_SRCS
         ${CMAKE_CURRENT_BINARY_DIR}/${_ifaceName}.xml ${_fileName} ${_className}
         )
 endmacro()
 
-add_resource_iface(util/imapresource.kcfg org.kde.Akonadi.Imap.Settings ImapSettings imapresourcesettings)
+add_resource_iface(util/imapresource.kcfg org.kde.Akonadi.Imap.Settings imapresourcesettings)
 
-kconfig_add_kcfg_files(libpimcommon_SRCS
-    settings/pimcommonsetting_base.kcfgc
+add_library(KF5PimCommon )
+add_library(KF5::PimCommon ALIAS KF5PimCommon)
+ecm_qt_declare_logging_category(KF5PimCommon HEADER pimcommon_debug.h IDENTIFIER PIMCOMMON_LOG CATEGORY_NAME org.kde.pim.pimcommon
+        DESCRIPTION "kdepim (pimcommon)"
+        OLD_CATEGORY_NAMES log_pimcommon
+        EXPORT PIMCOMMON
     )
 
-add_library(KF5PimCommon ${libpimcommon_SRCS})
+target_sources(KF5PimCommon PRIVATE
+    ${libpimcommon_SRCS}
+    genericplugins/pluginutil.cpp
+    genericplugins/genericpluginmanager.cpp
+    genericplugins/genericplugin.cpp
+    genericplugins/abstractgenericplugin.cpp
+    genericplugins/abstractgenericplugininterface.cpp
+    configureplugins/configurepluginslistwidget.cpp
+    configureplugins/configurepluginswidget.cpp
+    configureplugins/configureplugindialog.cpp
+
+    translator/translatorutil.cpp
+    translator/translatorutil.h
+    translator/translatorwidget.cpp
+    translator/translatorwidget.h
+    translator/translatordebugdialog.cpp
+    translator/translatordebugdialog.h
+    translator/translatorenginebase.cpp
+    translator/translatorenginebase.h
+    translator/translatorengineaccessmanager.h
+    translator/translatorengineaccessmanager.cpp
+    translator/translatorconfigurewidget.cpp
+    translator/translatorconfigurewidget.h
+    translator/translatorconfiguredialog.h
+    translator/translatorconfiguredialog.cpp
+
+    translator/engine/googletranslator.h
+    translator/engine/googletranslator.cpp
+    translator/engine/bingtranslator.h
+    translator/engine/bingtranslator.cpp
+    translator/engine/yandextranslator.h
+    translator/engine/yandextranslator.cpp
+    translator/engine/lingvatranslator.h
+    translator/engine/lingvatranslator.cpp
+    translator/engine/libretranslatetranslator.h
+    translator/engine/libretranslatetranslator.cpp
+    translator/engine/deepltranslator.cpp
+    translator/engine/deepltranslator.h
+
+    templatewidgets/templatelistwidget.cpp
+    templatewidgets/templateeditdialog.cpp
+    templatewidgets/templatemanager.cpp
+    widgets/renamefiledialog.cpp
+    widgets/simplestringlisteditor.cpp
+    widgets/customtreeview.cpp
+    widgets/configureimmutablewidgetutils.cpp
+    widgets/kactionmenuchangecase.cpp
+    widgets/spellchecklineedit.cpp
+    widgets/lineeditwithcompleterng.cpp
+    widgets/customlogwidget.cpp
+    customtools/customtoolsplugin.cpp
+    customtools/customtoolspluginmanager.cpp
+    customtools/customtoolswidgetng.cpp
+    customtools/customtoolsviewinterface.cpp
+    util/pimutil.cpp
+    util/broadcaststatus.cpp
+
+    shareserviceurl/shareserviceurlmanager.cpp
+    network/networkmanager.cpp
+    misc/emailvalidator.cpp
+    widgets/icons.qrc
+    misc/emailvalidator.h
+
+    customtools/customtoolswidgetng.h
+    customtools/customtoolsplugin.h
+    customtools/customtoolspluginmanager.h
+    customtools/customtoolsviewinterface.h
+    configureplugins/configureplugindialog.h
+    configureplugins/configurepluginswidget.h
+    configureplugins/configurepluginslistwidget.h
+    shareserviceurl/shareserviceurlmanager.h
+    pimcommon_private_export.h
+    network/networkmanager.h
+    widgets/renamefiledialog.h
+    widgets/spellchecklineedit.h
+    widgets/customtreeview.h
+    widgets/lineeditwithcompleterng.h
+    widgets/simplestringlisteditor.h
+    widgets/customlogwidget.h
+    widgets/configureimmutablewidgetutils.h
+    widgets/kactionmenuchangecase.h
+    templatewidgets/templatemanager.h
+    templatewidgets/templatelistwidget.h
+    templatewidgets/templateeditdialog.h
+    util/broadcaststatus.h
+    util/pimutil.h
+    genericplugins/genericplugin.h
+    genericplugins/genericpluginmanager.h
+    genericplugins/pluginutil.h
+    genericplugins/abstractgenericplugininterface.h
+    genericplugins/abstractgenericplugin.h
+
+    autocorrection/widgets/lineeditwithautocorrection.h
+    autocorrection/widgets/lineeditwithautocorrection.cpp
+    )
+
+if (QT_MAJOR_VERSION STREQUAL "5")
+    target_sources(KF5PimCommon PRIVATE
+        migration/migrateapplicationfiles.cpp
+        migration/migrateapplicationfiles.h
+
+        migration/migratefileinfo.cpp
+        migration/migratefileinfo.h
+    )
+endif()
+
+target_sources(KF5PimCommon PRIVATE
+    widgets/purposemenuwidget.h
+    widgets/purposemenuwidget.cpp
+)
+
 if (COMPILE_WITH_UNITY_CMAKE_SUPPORT)
     set_target_properties(KF5PimCommon PROPERTIES UNITY_BUILD ON)
 endif()
 generate_export_header(KF5PimCommon BASE_NAME pimcommon)
-add_library(KF5::PimCommon ALIAS KF5PimCommon)
 
 
 target_link_libraries(KF5PimCommon
     PUBLIC
-    Qt::Network
+    Qt::Gui
+    Qt::Widgets
+    Qt::DBus
     KF5::KIOCore
     KF5::ConfigWidgets
+    KF5::PimTextEdit
+    KF5::PimCommonAutoCorrection
     PRIVATE
+    Qt::Network
     KF5::I18n
     KF5::Libkdepim
-    KF5::Archive
     KF5::NewStuff
-    KF5::PimTextEdit
     KF5::XmlGui
-    KF5::PimTextEdit
     KF5::KIOWidgets
-    Qt::PrintSupport
+    KF5::ItemViews
+    KF5::NewStuff
+    KF5::NewStuffWidgets
     KF5::Purpose
     KF5::PurposeWidgets
-    )
+)
 
-
-target_include_directories(KF5PimCommon INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF5}/PimCommon/;${KDE_INSTALL_INCLUDEDIR_KF5}/pimcommon>")
+target_include_directories(KF5PimCommon INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/PimCommon/>")
 
 target_include_directories(KF5PimCommon PUBLIC "$<BUILD_INTERFACE:${pimcommon_SOURCE_DIR}/src;${pimcommon_BINARY_DIR}/src>")
 
@@ -204,25 +211,25 @@ set_target_properties(KF5PimCommon PROPERTIES
 
 install(TARGETS
     KF5PimCommon
-    EXPORT KF5PimCommonTargets ${KF5_INSTALL_TARGETS_DEFAULT_ARGS} 
+    EXPORT KF5PimCommonTargets ${KF_INSTALL_TARGETS_DEFAULT_ARGS}
     )
 
 if (BUILD_TESTING)
     add_subdirectory(translator/autotests)
-    add_subdirectory(autocorrection/autotests)
     add_subdirectory(widgets/autotests)
-    add_subdirectory(migration/autotests)
+    if (QT_MAJOR_VERSION STREQUAL "5")
+        add_subdirectory(migration/autotests)
+    endif()
     add_subdirectory(shareserviceurl/autotests)
     add_subdirectory(translator/tests)
     add_subdirectory(widgets/tests)
-    add_subdirectory(autocorrection/tests)
     add_subdirectory(customtools/autotests)
     add_subdirectory(autotests)
-    add_subdirectory(logactivities/autotests)
-    add_subdirectory(logactivities/tests)
     add_subdirectory(configureplugins/autotests)
     add_subdirectory(genericplugins/autotests)
     add_subdirectory(misc/autotests)
+    add_subdirectory(autocorrection/autotests)
+    add_subdirectory(autocorrection/tests)
 endif()
 
 ecm_generate_headers(PimCommon_CamelCasegenericplugins_HEADERS
@@ -236,6 +243,15 @@ ecm_generate_headers(PimCommon_CamelCasegenericplugins_HEADERS
     PREFIX PimCommon
     RELATIVE genericplugins
     )
+
+ecm_generate_headers(PimCommon_Camelcaseautocorrectionwidgets_HEADERS
+    HEADER_NAMES
+    LineEditWithAutoCorrection
+    REQUIRED_HEADERS PimCommon_autocorrectionwidgets_HEADERS
+    PREFIX PimCommon
+    RELATIVE autocorrection/widgets/
+    )
+
 
 ecm_generate_headers(PimCommon_CamelCasenetworkmanager_HEADERS
     HEADER_NAMES
@@ -262,22 +278,6 @@ ecm_generate_headers(PimCommon_CamelCase_HEADERS
     RELATIVE util
     )
 
-ecm_generate_headers(PimCommon_Camelcasesettings_HEADERS
-    HEADER_NAMES
-    PimCommonSettings
-    REQUIRED_HEADERS PimCommon_settings_HEADERS
-    PREFIX PimCommon
-    RELATIVE settings
-    )
-
-ecm_generate_headers(PimCommon_Camelcaselogactivities_HEADERS
-    HEADER_NAMES
-    LogActivitiesManager
-    REQUIRED_HEADERS PimCommon_logactivities_HEADERS
-    PREFIX PimCommon
-    RELATIVE logactivities
-    )
-
 ecm_generate_headers(PimCommon_Camelcaseshareserviceurl_HEADERS
     HEADER_NAMES
     ShareServiceUrlManager
@@ -289,6 +289,7 @@ ecm_generate_headers(PimCommon_Camelcaseshareserviceurl_HEADERS
 ecm_generate_headers(PimCommon_Camelcasetranslator_HEADERS
     HEADER_NAMES
     TranslatorWidget
+    TranslatorConfigureDialog
     REQUIRED_HEADERS PimCommon_translator_HEADERS
     PREFIX PimCommon
     RELATIVE translator
@@ -305,33 +306,16 @@ ecm_generate_headers(PimCommon_Camelcasecustomtools_HEADERS
     RELATIVE customtools
     )
 
-ecm_generate_headers(PimCommon_Camelcasemigrate_HEADERS
-    HEADER_NAMES
-    MigrateApplicationFiles
-    MigrateFileInfo
-    REQUIRED_HEADERS PimCommon_migrate_HEADERS
-    PREFIX PimCommon
-    RELATIVE migration
+if (QT_MAJOR_VERSION STREQUAL "5")
+    ecm_generate_headers(PimCommon_Camelcasemigrate_HEADERS
+        HEADER_NAMES
+        MigrateApplicationFiles
+        MigrateFileInfo
+        REQUIRED_HEADERS PimCommon_migrate_HEADERS
+        PREFIX PimCommon
+        RELATIVE migration
     )
-
-ecm_generate_headers(PimCommon_Camelcaseautocorrectionwidgets_HEADERS
-    HEADER_NAMES
-    RichTexteditWithAutoCorrection
-    LineEditWithAutoCorrection
-    REQUIRED_HEADERS PimCommon_autocorrectionwidgets_HEADERS
-    PREFIX PimCommon
-    RELATIVE autocorrection/widgets/
-    )
-
-ecm_generate_headers(PimCommon_Camelcaseautocorrection_HEADERS
-    HEADER_NAMES
-    AutoCorrectionWidget
-    AutoCorrectionLanguage
-    AutoCorrection
-    REQUIRED_HEADERS PimCommon_autocorrection_HEADERS
-    PREFIX PimCommon
-    RELATIVE autocorrection/
-    )
+endif()
 
 ecm_generate_headers(PimCommon_Camelcasetemplatelist_HEADERS
     HEADER_NAMES
@@ -351,7 +335,6 @@ ecm_generate_headers(PimCommon_Camelcasewidgets_HEADERS
     RenameFileDialog
     SimpleStringListEditor
     KActionMenuChangeCase
-    KPimPrintPreviewDialog
     LineEditWithCompleterNg
     CustomLogWidget
     PurposeMenuWidget
@@ -371,26 +354,23 @@ ecm_generate_headers(PimCommon_Camelcaseconfigureplugins_HEADERS
     )
 ecm_generate_pri_file(BASE_NAME PimCommon
     LIB_NAME KF5PimCommon
-    DEPS "network KIOCore KConfigWidgets" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5}/PimCommon
+    DEPS "network KIOCore KConfigWidgets" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/PimCommon
     )
 
 
 install(FILES
     ${PimCommon_Camelcaseconfigureplugins_HEADERS}
     ${PimCommon_CamelCasegenericplugins_HEADERS}
-    ${PimCommon_Camelcaselogactivities_HEADERS}
+    ${PimCommon_Camelcaseautocorrectionwidgets_HEADERS}
     ${PimCommon_CamelCasenetworkmanager_HEADERS}
     ${PimCommon_CamelCase_HEADERS}
     ${PimCommon_CamelCasejob_HEADERS}
-    ${PimCommon_Camelcaseautocorrection_HEADERS}
-    ${PimCommon_Camelcaseautocorrectionwidgets_HEADERS}
     ${PimCommon_Camelcasecustomtools_HEADERS}
     ${PimCommon_Camelcasemanagerserversidesubscription_HEADERS}
     ${PimCommon_Camelcasemigrate_HEADERS}
     ${PimCommon_Camelcaseplaintexteditor_HEADERS}
     ${PimCommon_Camelcaserichtexteditor_HEADERS}
     ${PimCommon_Camelcasescript_HEADERS}
-    ${PimCommon_Camelcasesettings_HEADERS}
     ${PimCommon_Camelcaseshareserviceurl_HEADERS}
     ${PimCommon_Camelcasestorageservice_HEADERS}
     ${PimCommon_Camelcasestorageservicedialog_HEADERS}
@@ -402,27 +382,24 @@ install(FILES
     ${PimCommon_Camelcasetranslator_HEADERS}
     ${PimCommon_Camelcasewidgets_HEADERS}
     ${PimCommon_CamelCasemisc_HEADERS}
-    DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/PimCommon
+    DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/PimCommon/PimCommon
     COMPONENT Devel
     )
 
 install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/imapresourcesettings.h
     ${CMAKE_CURRENT_BINARY_DIR}/pimcommon_export.h
-    ${CMAKE_CURRENT_BINARY_DIR}/pimcommonsetting_base.h
     ${PimCommon_HEADERS}
+    ${PimCommon_autocorrectionwidgets_HEADERS}
     ${PimCommon_genericplugins_HEADERS}
     ${PimCommon_configureplugins_HEADERS}
     ${PimCommon_networkmanager_HEADERS}
-    ${PimCommon_autocorrection_HEADERS}
-    ${PimCommon_autocorrectionwidgets_HEADERS}
     ${PimCommon_customtools_HEADERS}
     ${PimCommon_job_HEADERS}
     ${PimCommon_managerserversidesubscription_HEADERS}
     ${PimCommon_migrate_HEADERS}
     ${PimCommon_plaintexteditor_HEADERS}
     ${PimCommon_richtexteditor_HEADERS}
-    ${PimCommon_settings_HEADERS}
     ${PimCommon_shareserviceurl_HEADERS}
     ${PimCommon_storageservice_HEADERS}
     ${PimCommon_storageservicedialog_HEADERS}
@@ -433,10 +410,9 @@ install(FILES
     ${PimCommon_texteditor_commonwidget_HEADERS}
     ${PimCommon_translator_HEADERS}
     ${PimCommon_widgets_HEADERS}
-    ${PimCommon_logactivities_HEADERS}
     ${PimCommon_misc_HEADERS}
 
-    DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/pimcommon
+    DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/PimCommon/pimcommon
     COMPONENT Devel
     )
 
@@ -448,3 +424,48 @@ if(BUILD_DESIGNERPLUGIN)
     add_subdirectory(designer)
 endif()
 
+if (BUILD_QCH)
+    ecm_add_qch(
+        KF5PimCommon_QCH
+        NAME KF5PimCommon
+        BASE_NAME KF5PimCommon
+        VERSION ${PIM_VERSION}
+        ORG_DOMAIN org.kde
+        SOURCES # using only public headers, to cover only public API
+        ${PimCommon_HEADERS}
+        ${PimCommon_genericplugins_HEADERS}
+        ${PimCommon_configureplugins_HEADERS}
+        ${PimCommon_networkmanager_HEADERS}
+        ${PimCommon_customtools_HEADERS}
+        ${PimCommon_job_HEADERS}
+        ${PimCommon_managerserversidesubscription_HEADERS}
+        ${PimCommon_migrate_HEADERS}
+        ${PimCommon_plaintexteditor_HEADERS}
+        ${PimCommon_richtexteditor_HEADERS}
+        ${PimCommon_settings_HEADERS}
+        ${PimCommon_shareserviceurl_HEADERS}
+        ${PimCommon_storageservice_HEADERS}
+        ${PimCommon_storageservicedialog_HEADERS}
+        ${PimCommon_storageserviceinterface_HEADERS}
+        ${PimCommon_storageservicesettings_HEADERS}
+        ${PimCommon_storageservicewidgets_HEADERS}
+        ${PimCommon_templatelist_HEADERS}
+        ${PimCommon_texteditor_commonwidget_HEADERS}
+        ${PimCommon_translator_HEADERS}
+        ${PimCommon_widgets_HEADERS}
+        ${PimCommon_misc_HEADERS}
+        #MD_MAINPAGE "${CMAKE_SOURCE_DIR}/README.md"
+        #IMAGE_DIRS "${CMAKE_SOURCE_DIR}/docs/pics"
+        LINK_QCHS
+            Qt5Core_QCH
+            Qt5Gui_QCH
+            Qt5Widgets_QCH
+        INCLUDE_DIRS
+            ${CMAKE_CURRENT_BINARY_DIR}
+        BLANK_MACROS
+            PIMCOMMON_EXPORT
+        TAGFILE_INSTALL_DESTINATION ${KDE_INSTALL_QTQCHDIR}
+        QCH_INSTALL_DESTINATION ${KDE_INSTALL_QTQCHDIR}
+        COMPONENT Devel
+    )
+endif()

@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2018-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2018-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -20,7 +20,6 @@ PurposeMenuWidget::PurposeMenuWidget(QWidget *parentWidget, QObject *parent)
 {
     mShareMenu = new Purpose::Menu(mParentWidget);
     mShareMenu->setObjectName(QStringLiteral("purposesharemenu"));
-    mShareMenu->model()->setPluginType(QStringLiteral("Export"));
     connect(mShareMenu, &Purpose::Menu::aboutToShow, this, &PurposeMenuWidget::slotInitializeShareMenu);
     connect(mShareMenu, &Purpose::Menu::finished, this, &PurposeMenuWidget::slotShareActionFinished);
 }
@@ -45,6 +44,7 @@ void PurposeMenuWidget::slotInitializeShareMenu()
     mTemporaryShareFile->close();
     mShareMenu->model()->setInputData(QJsonObject{{QStringLiteral("urls"), QJsonArray{{QUrl::fromLocalFile(mTemporaryShareFile->fileName()).toString()}}},
                                                   {QStringLiteral("mimeType"), {QStringLiteral("text/plain")}}});
+    mShareMenu->model()->setPluginType(QStringLiteral("Export"));
     mShareMenu->reload();
 }
 

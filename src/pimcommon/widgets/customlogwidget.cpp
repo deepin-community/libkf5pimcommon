@@ -1,9 +1,10 @@
 /*
-   SPDX-FileCopyrightText: 2012-2021 Laurent Montel <montel@kde.org>
+   SPDX-FileCopyrightText: 2012-2022 Laurent Montel <montel@kde.org>
 
    SPDX-License-Identifier: LGPL-2.0-or-later
 */
 #include "customlogwidget.h"
+#include <KColorScheme>
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
 #include <QPainter>
@@ -17,9 +18,7 @@ LogItemDelegate::LogItemDelegate(QObject *parent)
 {
 }
 
-LogItemDelegate::~LogItemDelegate()
-{
-}
+LogItemDelegate::~LogItemDelegate() = default;
 
 QTextDocument *LogItemDelegate::document(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
@@ -76,12 +75,12 @@ void LogItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 QSize LogItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     if (!index.isValid()) {
-        return QSize(0, 0);
+        return {0, 0};
     }
 
     QTextDocument *doc = document(option, index);
     if (!doc) {
-        return QSize(0, 0);
+        return {0, 0};
     }
 
     const QSize size = doc->documentLayout()->documentSize().toSize();
@@ -102,14 +101,12 @@ CustomLogWidget::CustomLogWidget(QWidget *parent)
     setItemDelegate(itemDelegate);
 }
 
-CustomLogWidget::~CustomLogWidget()
-{
-}
+CustomLogWidget::~CustomLogWidget() = default;
 
 void CustomLogWidget::addTitleLogEntry(const QString &log)
 {
     auto item = new QListWidgetItem(log);
-    item->setForeground(Qt::black);
+    item->setForeground(palette().color(QPalette::WindowText));
     QFont font = item->font();
     font.setBold(true);
     item->setFont(font);
@@ -121,7 +118,7 @@ void CustomLogWidget::addTitleLogEntry(const QString &log)
 void CustomLogWidget::addInfoLogEntry(const QString &log)
 {
     auto item = new QListWidgetItem(log);
-    item->setForeground(Qt::blue);
+    item->setForeground(palette().color(QPalette::WindowText));
     item->setData(ItemLogType, Info);
     addItem(item);
     scrollToItem(item);
@@ -130,7 +127,7 @@ void CustomLogWidget::addInfoLogEntry(const QString &log)
 void CustomLogWidget::addErrorLogEntry(const QString &log)
 {
     auto item = new QListWidgetItem(log);
-    item->setForeground(Qt::red);
+    item->setForeground(KColorScheme().foreground(KColorScheme::NegativeText));
     item->setData(ItemLogType, Error);
     addItem(item);
     scrollToItem(item);

@@ -1,5 +1,5 @@
 /*
-   SPDX-FileCopyrightText: 2016-2021 Laurent Montel <montel@kde.org>
+   SPDX-FileCopyrightText: 2016-2022 Laurent Montel <montel@kde.org>
 
    SPDX-License-Identifier: LGPL-2.0-or-later
 */
@@ -18,7 +18,6 @@ namespace PimCommon
 class PIMCOMMONAKONADI_EXPORT AddresseeLineEditUtil
 {
 public:
-    static Q_REQUIRED_RESULT QString adaptPasteMails(const QString &str);
+    Q_REQUIRED_RESULT static QString adaptPasteMails(const QString &str);
 };
 }
-

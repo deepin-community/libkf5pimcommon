@@ -1,6 +1,6 @@
 /*
    SPDX-FileCopyrightText: 2010 Thomas McGuire <mcguire@kde.org>
-   SPDX-FileCopyrightText: 2014-2021 Laurent Montel <montel@kde.org>
+   SPDX-FileCopyrightText: 2014-2022 Laurent Montel <montel@kde.org>
 
    SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
@@ -8,13 +8,13 @@
 #include "annotationdialog.h"
 #include <KPIMTextEdit/PlainTextEditorWidget>
 
-#include <ItemModifyJob>
+#include <Akonadi/EntityAnnotationsAttribute>
+#include <Akonadi/Item>
+#include <Akonadi/ItemModifyJob>
 #include <KLocalizedString>
 #include <KMessageBox>
 #include <KSharedConfig>
 #include <KStandardGuiItem>
-#include <entityannotationsattribute.h>
-#include <item.h>
 
 #include <QComboBox>
 #include <QIcon>
@@ -27,12 +27,10 @@
 
 using namespace PimCommon;
 
-class Q_DECL_HIDDEN AnnotationEditDialog::Private
+class Q_DECL_HIDDEN AnnotationEditDialog::AnnotationEditDialogPrivate
 {
 public:
-    Private()
-    {
-    }
+    AnnotationEditDialogPrivate() = default;
 
     Akonadi::Item mItem;
     KPIMTextEdit::PlainTextEditorWidget *mTextEdit = nullptr;
@@ -42,7 +40,7 @@ public:
 
 AnnotationEditDialog::AnnotationEditDialog(const Akonadi::Item &item, QWidget *parent)
     : QDialog(parent)
-    , d(new Private)
+    , d(new AnnotationEditDialogPrivate)
 {
     d->mItem = item;
     // check for correct key?
@@ -72,7 +70,7 @@ AnnotationEditDialog::AnnotationEditDialog(const Akonadi::Item &item, QWidget *p
 
     auto label = new QLabel(i18n("Enter the text that should be stored as a note to the mail:"));
     auto vbox = new QVBoxLayout(mainWidget);
-    vbox->setContentsMargins(0, 0, 0, 0);
+    vbox->setContentsMargins({});
     d->mTextEdit = new KPIMTextEdit::PlainTextEditorWidget(this);
     vbox->addWidget(label);
     vbox->addWidget(d->mTextEdit);
@@ -104,7 +102,6 @@ AnnotationEditDialog::AnnotationEditDialog(const Akonadi::Item &item, QWidget *p
 AnnotationEditDialog::~AnnotationEditDialog()
 {
     writeConfig();
-    delete d;
 }
 
 void AnnotationEditDialog::slotAccepted()
@@ -117,7 +114,7 @@ void AnnotationEditDialog::slotAccepted()
         map.insert(d->mNoteType->itemData(d->mNoteType->currentIndex()).toByteArray(), d->mTextEdit->toPlainText().toUtf8());
         annotation->setAnnotations(map);
         d->mItem.addAttribute(annotation);
-    } else if (d->mHasAnnotation && textIsEmpty) {
+    } else if (d->mHasAnnotation) {
         d->mItem.removeAttribute<Akonadi::EntityAnnotationsAttribute>();
     }
     new Akonadi::ItemModifyJob(d->mItem);
@@ -128,7 +125,7 @@ void AnnotationEditDialog::slotDeleteNote()
 {
     const int answer = KMessageBox::warningContinueCancel(this,
                                                           i18n("Do you really want to delete this note?"),
-                                                          i18nc("@title:window", "Delete Note?"),
+                                                          i18nc("@title:window", "Delete Note"),
                                                           KStandardGuiItem::del());
     if (answer == KMessageBox::Continue) {
         d->mItem.removeAttribute<Akonadi::EntityAnnotationsAttribute>();

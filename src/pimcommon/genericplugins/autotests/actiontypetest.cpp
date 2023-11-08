@@ -1,11 +1,11 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 #include "actiontypetest.h"
-#include <PimCommonAkonadi/GenericPluginInterface>
+#include <PimCommon/AbstractGenericPluginInterface>
 #include <QAction>
 #include <QTest>
 
@@ -14,9 +14,7 @@ ActionTypeTest::ActionTypeTest(QObject *parent)
 {
 }
 
-ActionTypeTest::~ActionTypeTest()
-{
-}
+ActionTypeTest::~ActionTypeTest() = default;
 
 void ActionTypeTest::shouldHaveDefaultValue()
 {

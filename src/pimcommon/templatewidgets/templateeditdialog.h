@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -32,9 +32,8 @@ private:
     void slotTemplateChanged();
     void readConfig();
     void writeConfig();
-    KPIMTextEdit::PlainTextEditorWidget *mTextEdit = nullptr;
-    QLineEdit *mTemplateNameEdit = nullptr;
+    KPIMTextEdit::PlainTextEditorWidget *const mTextEdit;
+    QLineEdit *const mTemplateNameEdit;
     QPushButton *mOkButton = nullptr;
 };
 }
-

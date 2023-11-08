@@ -6,20 +6,75 @@ Source: https://invent.kde.org/pim/pimcommon
 Files: *
 Copyright: 2004, David Faure <faure@kde.org>
            2001, Marc Mutz <mutz@kde.org>
-           2011-2018, Montel Laurent <montel@kde.org>
-           2012-2016, This_file_is_part_of_KDE
+           2011-2012, Laurent Montel <montel@kde.org>
+           2010 Thomas McGuire <mcguire@kde.org>
+           2010 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+           2012-2022, This_file_is_part_of_KDE
 License: GPL-2
 
-Files: src/pimcommon/logactivities/tests/logactivitiesmainwidget.cpp
-       src/pimcommon/logactivities/tests/logactivitiesmainwidget.h
-       src/pimcommon/logactivities/tests/main.cpp
-       src/pimcommon/pimcommon_private_export.h
-       src/pimcommonakonadi/acl/aclmodifyjob.cpp
+Files: src/pimcommonakonadi/acl/aclmodifyjob.cpp
        src/pimcommonakonadi/acl/aclmodifyjob.h
        src/pimcommonakonadi/acl/imapaclattribute.cpp
        src/pimcommonakonadi/acl/imapaclattribute.h
+       src/pimcommonakonadi/addressline/addresslineedit/addresseelineeditakonadi.cpp
+       src/pimcommonakonadi/addressline/addresslineedit/addresseelineeditakonadi.h
+       src/pimcommonakonadi/addressline/addresslineedit/addresseelineeditbaloo.cpp
+       src/pimcommonakonadi/addressline/addresslineedit/addresseelineeditbaloo.h
+       src/pimcommonakonadi/addressline/addresslineedit/addresseelineedit.cpp
+       src/pimcommonakonadi/addressline/addresslineedit/addresseelineedit.h
+       src/pimcommonakonadi/addressline/addresslineedit/addresseelineeditldap.cpp
+       src/pimcommonakonadi/addressline/addresslineedit/addresseelineeditldap.h
+       src/pimcommonakonadi/addressline/addresslineedit/addresseelineeditutil.cpp
+       src/pimcommonakonadi/addressline/addresslineedit/addresseelineeditutil.h
+       src/pimcommonakonadi/addressline/addresslineedit/baloocompletionemail.cpp
+       src/pimcommonakonadi/addressline/addresslineedit/baloocompletionemail.h
+       src/pimcommonakonadi/addressline/addresslineedit/kmailcompletion.cpp
+       src/pimcommonakonadi/addressline/addresslineedit/kmailcompletion.h
+       src/pimcommonakonadi/addressline/autotests/addresseelineeditutiltest.cpp
+       src/pimcommonakonadi/addressline/autotests/addresseelineeditutiltest.h
+       src/pimcommonakonadi/addressline/autotests/baloocompletionemailtest.cpp
+       src/pimcommonakonadi/addressline/autotests/baloocompletionemailtest.h
+       src/pimcommonakonadi/addressline/autotests/completionconfiguredialogtest.cpp
+       src/pimcommonakonadi/addressline/autotests/completionconfiguredialogtest.h
+       src/pimcommonakonadi/addressline/autotests/completionorderwidgettest.cpp
+       src/pimcommonakonadi/addressline/autotests/completionorderwidgettest.h
+       src/pimcommonakonadi/addressline/autotests/recentaddresswidgettest.cpp
+       src/pimcommonakonadi/addressline/autotests/recentaddresswidgettest.h
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/autotests/blacklistbalooemailcompletionwidgettest.cpp
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/autotests/blacklistbalooemailcompletionwidgettest.h
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/autotests/blacklistbalooemaillisttest.cpp
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/autotests/blacklistbalooemaillisttest.h
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/autotests/blacklistbalooemailsearchjobtest.cpp
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/autotests/blacklistbalooemailsearchjobtest.h
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/autotests/blacklistbalooemailutiltest.cpp
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/autotests/blacklistbalooemailutiltest.h
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/autotests/blacklistbalooemailwarningtest.cpp
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/autotests/blacklistbalooemailwarningtest.h
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/blacklistbalooemailcompletionwidget.cpp
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/blacklistbalooemailcompletionwidget.h
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/blacklistbalooemaillist.cpp
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/blacklistbalooemaillist.h
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/blacklistbalooemailsearchjob.cpp
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/blacklistbalooemailsearchjob.h
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/blacklistbalooemailutil.cpp
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/blacklistbalooemailutil.h
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/blacklistbalooemailwarning.cpp
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/blacklistbalooemailwarning.h
+       src/pimcommonakonadi/addressline/completionconfiguredialog/completionconfiguredialog.cpp
+       src/pimcommonakonadi/addressline/completionconfiguredialog/completionconfiguredialog.h
+       src/pimcommonakonadi/addressline/completionorder/completionorderwidget.cpp
+       src/pimcommonakonadi/addressline/completionorder/completionorderwidget.h
+       src/pimcommonakonadi/addressline/plugins/addressesslineeditabstractplugin.cpp
+       src/pimcommonakonadi/addressline/plugins/addressesslineeditabstractplugin.h
+       src/pimcommonakonadi/addressline/plugins/addressesslineeditpluginmanager.cpp
+       src/pimcommonakonadi/addressline/plugins/addressesslineeditpluginmanager.h
+       src/pimcommonakonadi/addressline/recentaddress/recentaddresswidget.cpp
+       src/pimcommonakonadi/addressline/recentaddress/recentaddresswidget.h
+       src/pimcommonakonadi/addressline/tests/completionconfiguredialog_gui.cpp
+       src/pimcommonakonadi/addressline/tests/testaddresseelineedit.cpp
        src/pimcommonakonadi/collectionpage/attributeregistrar.cpp
-       src/pimcommonakonadi/collectionpage/attributes/*
+       src/pimcommonakonadi/collectionpage/attributes/collectionannotationsattribute.cpp
+       src/pimcommonakonadi/collectionpage/attributes/collectionannotationsattribute.h
        src/pimcommonakonadi/collectionpage/autotests/contenttypewidgettest.cpp
        src/pimcommonakonadi/collectionpage/autotests/contenttypewidgettest.h
        src/pimcommonakonadi/collectionpage/autotests/incidencesforwidgettest.cpp
@@ -30,11 +85,35 @@ Files: src/pimcommon/logactivities/tests/logactivitiesmainwidget.cpp
        src/pimcommonakonadi/collectionpage/contenttypewidget.h
        src/pimcommonakonadi/collectionpage/incidencesforwidget.cpp
        src/pimcommonakonadi/collectionpage/incidencesforwidget.h
+       src/pimcommonakonadi/ldap/ldapsearchdialog.cpp
+       src/pimcommonakonadi/ldap/ldapsearchdialog.h
+       src/pimcommonakonadi/ldap/tests/ldapsearchdialog_gui.cpp
        src/pimcommonakonadi/pimcommonakonadi_private_export.h
+       src/pimcommonakonadi/progresswidget/agentprogressmonitor.cpp
+       src/pimcommonakonadi/progresswidget/agentprogressmonitor.h
+       src/pimcommonakonadi/progresswidget/progressmanagerakonadi.cpp
+       src/pimcommonakonadi/progresswidget/progressmanagerakonadi.h
+       src/pimcommonautocorrection/autocorrection/widgets/selectspecialchardialog.cpp
+       src/pimcommonautocorrection/autocorrection/widgets/selectspecialchardialog.h
+       src/pimcommonautocorrection/pimcommonautocorrection_private_export.h
+       src/pimcommon/misc/emailvalidator.cpp
+       src/pimcommon/misc/emailvalidator.h
+       src/pimcommon/pimcommon_private_export.h
+       src/pimcommon/widgets/customlogwidget.cpp
+       src/pimcommon/widgets/customlogwidget.h
 Copyright: 2009, Constantin Berzan <exit3219@gmail.com>
            2009, Kevin Ottens <ervin@kde.org>
-           2014-2018, Laurent Montel <montel@kde.org>
+           2014-2022, Laurent Montel <montel@kde.org>
            2008, Omat Holding B.V <info@omat.nl>
+           2021 Carl Schwan <carlschwan@kde.org>
+           2009-2010 Klaralvdalens Datakonsult AB, a KDAB Group company <info@kdab.net>
+           2010 Casey Link <unnamedrambler@gmail.com>
+           2004 Daniel Molkentin <danimo@klaralvdalens-datakonsult.se>
+           2006 Christian Schaarschmidt <schaarsc@gmx.de>
+           2002 Lubos Lunak <llunak@suse.cz>
+           2002 Helge Deller <deller@gmx.de>
+           2004 Till Adam <adam@kde.org>
+           2002 Steffen Hansen <hansen@kde.org>
 License: LGPL-2+
 
 Files: src/pimcommon/util/pimutil.cpp
@@ -66,8 +145,56 @@ Copyright: 2014-2018, Laurent Montel <montel@kde.org>
            2010, Thomas McGuire <mcguire@kde.org>
 License: GPL-2+3+KDEeV
 
+Files: .codespellrc
+       .gitlab-ci.yml
+       .kde-ci.yml
+       CMakeLists.txt
+       config-akonadi-search.h.in
+       metainfo.yaml
+       sanitizers.supp
+       src/CMakeLists.txt
+       src/Messages.sh
+       src/pimcommon/CMakeLists.txt
+       src/pimcommon/autocorrection/autotests/CMakeLists.txt
+       src/pimcommon/autocorrection/tests/CMakeLists.txt
+       src/pimcommon/autotests/CMakeLists.txt
+       src/pimcommon/configureplugins/autotests/CMakeLists.txt
+       src/pimcommon/customtools/autotests/CMakeLists.txt
+       src/pimcommon/designer/CMakeLists.txt
+       src/pimcommon/genericplugins/autotests/CMakeLists.txt
+       src/pimcommon/migration/autotests/CMakeLists.txt
+       src/pimcommon/misc/autotests/CMakeLists.txt
+       src/pimcommon/shareserviceurl/autotests/CMakeLists.txt
+       src/pimcommon/translator/autotests/CMakeLists.txt
+       src/pimcommon/translator/tests/CMakeLists.txt
+       src/pimcommon/widgets/autotests/CMakeLists.txt
+       src/pimcommon/widgets/icons.qrc
+       src/pimcommon/widgets/tests/CMakeLists.txt
+       src/pimcommonakonadi/CMakeLists.txt
+       src/pimcommonakonadi/acl/autotests/CMakeLists.txt
+       src/pimcommonakonadi/addressline/autotests/CMakeLists.txt
+       src/pimcommonakonadi/addressline/blacklistbaloocompletion/autotests/CMakeLists.txt
+       src/pimcommonakonadi/addressline/tests/CMakeLists.txt
+       src/pimcommonakonadi/collectionpage/autotests/CMakeLists.txt
+       src/pimcommonakonadi/designer/CMakeLists.txt
+       src/pimcommonakonadi/folderdialog/tests/CMakeLists.txt
+       src/pimcommonakonadi/ldap/tests/CMakeLists.txt
+       src/pimcommonautocorrection/CMakeLists.txt
+       src/pimcommonautocorrection/autocorrection/autotests/CMakeLists.txt
+       src/pimcommonautocorrection/autocorrection/tests/CMakeLists.txt
+Copyright: 2021-2022 Laurent Montel <montel@kde.org>
+License: CC0-1.0
+
+Files: CMakePresets.json
+       src/pimcommon/KF5PimCommonConfig.cmake.in
+       src/pimcommonakonadi/KF5PimCommonAkonadiConfig.cmake.in
+       src/pimcommonautocorrection/KF5PimCommonAutoCorrectionConfig.cmake.in
+Copyright: 2021-2022 Laurent Montel <montel@kde.org>
+License: BSD-3-Clause
+
 Files: debian/*
 Copyright: 2016, Maximiliano Curia <maxy@debian.org>
+           2022, Patrick Franz <deltaone@debian.org>
 License: LGPL-2+
 
 License: GPL-2
@@ -138,3 +265,31 @@ License: LGPL-2.1+3+KDEeV
  can be found in `/usr/share/common-licenses/LGPL-2.1', likewise, the complete
  text of the GNU Lesser General Public License version 3 can be found in
  `/usr/share/common-licenses/LGPL-3'.
+
+License: CC0-1.0
+ The complete text of the reative Commons Zero v1.0 Universal can be found
+ in `/usr/share/common-licenses/CC0-1.0'.
+
+License: BSD-3-Clause
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ .
+ 1. Redistributions of source code must retain the copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. The name of the author may not be used to endorse or promote products
+    derived from this software without specific prior written permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

@@ -2,45 +2,41 @@ Source: libkf5pimcommon
 Section: libs
 Priority: optional
 Maintainer: Debian Qt/KDE Maintainers <debian-qt-kde@lists.debian.org>
-Uploaders: Norbert Preining <norbert@preining.info>,
-           Sandro Knauß <hefee@debian.org>,
+Uploaders: Sandro Knauß <hefee@debian.org>,
+           Patrick Franz <deltaone@debian.org>,
 Build-Depends: cmake (>= 3.16~),
                debhelper-compat (= 13),
-               extra-cmake-modules (>= 5.83.0~),
-               libgrantlee5-dev (>= 5.1~),
-               libkf5akonadi-dev (>= 4:21.08.1~),
-               libkf5akonadicontact-dev (>= 4:21.08.1~),
-               libkf5akonadisearch-dev (>= 4:21.08.1~),
-               libkf5archive-dev (>= 5.83.0~),
-               libkf5codecs-dev (>= 5.83.0~),
-               libkf5completion-dev (>= 5.68.0~),
-               libkf5config-dev (>= 5.83.0~),
-               libkf5configwidgets-dev (>= 5.83.0~),
-               libkf5contacts-dev (>= 5:5.83.0~),
-               libkf5coreaddons-dev (>= 5.83.0~),
-               libkf5grantleetheme-dev (>= 21.08.1~),
-               libkf5i18n-dev (>= 5.83.0~),
-               libkf5imap-dev (>= 21.08.1~),
-               libkf5itemmodels-dev (>= 5.83.0~),
-               libkf5jobwidgets-dev (>= 5.83.0~),
-               libkf5kcmutils-dev (>= 5.83.0~),
-               libkf5kio-dev (>= 5.83.0~),
-               libkf5ldap-dev (>= 21.08.1~),
-               libkf5libkdepim-dev (>= 4:21.08.1~),
-               libkf5mime-dev (>= 21.08.1~),
-               libkf5newstuff-dev (>= 5.83.0~),
-               libkf5pimtextedit-dev (>= 21.08.1~),
-               libkf5purpose-dev (>= 5.83.0~),
-               libkf5service-dev (>= 5.83.0~),
-               libkf5widgetsaddons-dev (>= 5.83.0~),
-               libkf5xmlgui-dev (>= 5.83.0~),
+               extra-cmake-modules (>= 5.99.0~),
+               libkf5akonadi-dev (>= 4:22.12.3~),
+               libkf5akonadicontact-dev (>= 4:22.12.3~),
+               libkf5akonadisearch-dev (>= 4:22.12.3~),
+               libkf5archive-dev (>= 5.99.0~),
+               libkf5codecs-dev (>= 5.99.0~),
+               libkf5config-dev (>= 5.99.0~),
+               libkf5configwidgets-dev (>= 5.99.0~),
+               libkf5contacts-dev (>= 5:5.99.0~),
+               libkf5coreaddons-dev (>= 5.99.0~),
+               libkf5i18n-dev (>= 5.99.0~),
+               libkf5imap-dev (>= 22.12.3~),
+               libkf5itemmodels-dev (>= 5.99.0~),
+               libkf5jobwidgets-dev (>= 5.99.0~),
+               libkf5kcmutils-dev (>= 5.99.0~),
+               libkf5kio-dev (>= 5.99.0~),
+               libkf5ldap-dev (>= 22.12.3~),
+               libkf5libkdepim-dev (>= 4:22.12.3~),
+               libkf5newstuff-dev (>= 5.99.0~),
+               libkf5pimtextedit-dev (>= 22.12.3~),
+               libkf5purpose-dev (>= 5.99.0~),
+               libkf5service-dev (>= 5.99.0~),
+               libkf5widgetsaddons-dev (>= 5.99.0~),
+               libkf5xmlgui-dev (>= 5.99.0~),
                pkg-kde-tools (>= 0.12),
-               qtbase5-dev (>= 5.15.0~),
+               qtbase5-dev (>= 5.15.2~),
                qttools5-dev (>= 5.4.0~),
                xauth,
                xsltproc,
                xvfb,
-Standards-Version: 4.6.0
+Standards-Version: 4.6.2
 Homepage: https://invent.kde.org/pim/pimcommon
 Vcs-Browser: https://salsa.debian.org/qt-kde-team/kde/pimcommon
 Vcs-Git: https://salsa.debian.org/qt-kde-team/kde/pimcommon.git
@@ -49,7 +45,7 @@ Rules-Requires-Root: no
 Package: libkf5pimcommon-data
 Architecture: all
 Multi-Arch: foreign
-Depends: ${misc:Depends}
+Depends: ${misc:Depends},
 Description: Common library for KDE PIM - data files
  This library provides the common parts used across different KDE PIM
  components.
@@ -59,14 +55,15 @@ Description: Common library for KDE PIM - data files
 Package: libkf5pimcommon-dev
 Section: libdevel
 Architecture: any
-Depends: libkf5akonadi-dev (>= 4:21.08.1~),
-         libkf5akonadicontact-dev (>= 4:21.08.1~),
-         libkf5config-dev (>= 5.83.0~),
-         libkf5contacts-dev (>= 5:5.83.0~),
-         libkf5imap-dev (>= 21.08.1~),
+Depends: libkf5akonadi-dev (>= 4:22.12.3~),
+         libkf5akonadicontact-dev (>= 4:22.12.3~),
+         libkf5config-dev (>= 5.99.0~),
+         libkf5contacts-dev (>= 5:5.99.0~),
+         libkf5imap-dev (>= 22.12.3~),
          libkf5pimcommon5abi2 (= ${binary:Version}),
          libkf5pimcommonakonadi5abi1 (= ${binary:Version}),
-         libkf5pimtextedit-dev (>= 21.08.1~),
+         libkf5pimcommonautocorrection5 (= ${binary:Version}),
+         libkf5pimtextedit-dev (>= 22.12.3~),
          ${misc:Depends},
          ${shlibs:Depends},
 Description: Common library for KDE PIM - devel files
@@ -78,7 +75,7 @@ Description: Common library for KDE PIM - devel files
 Package: libkf5pimcommon-plugins
 Architecture: any
 Multi-Arch: same
-Depends: ${misc:Depends}, ${shlibs:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends},
 Description: Common library for KDE PIM - plugins
  This library provides the common parts used across different KDE PIM
  components.
@@ -90,13 +87,13 @@ X-Debian-ABI: 2
 X-CMake-Target: KF5PimCommon
 Architecture: any
 Multi-Arch: same
-Depends: ${misc:Depends}, ${shlibs:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends},
 Description: Common library for KDE PIM
  This library provides the common parts used across different KDE PIM
  components.
  .
  This package provides the shared libraries.
-Provides: ${ABI:VirtualPackage}
+Provides: ${ABI:VirtualPackage},
 
 Package: libkf5pimcommonakonadi5abi1
 X-Debian-ABI: 1
@@ -111,4 +108,15 @@ Description: Common library for KDE PIM Akonadi
  components.
  .
  This package provides the shared libraries.
-Provides: ${ABI:VirtualPackage}
+Provides: ${ABI:VirtualPackage},
+
+Package: libkf5pimcommonautocorrection5
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends}, ${shlibs:Depends},
+Description: Common library for KDE PIM Autocorrection
+ This library provides the common parts used across different KDE PIM
+ Autocorrection components.
+ .
+ This package provides the shared libraries.
+Provides: ${ABI:VirtualPackage},

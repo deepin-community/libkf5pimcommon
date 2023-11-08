@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -68,6 +68,7 @@ private:
 CollectionAclWidget::CollectionAclWidget(QWidget *parent)
     : QWidget(parent)
     , mAclManager(new PimCommon::AclManager(this))
+    , mRecursiveChk(new QCheckBox(i18n("Apply permissions on all &subfolders."), this))
 {
     auto layout = new QHBoxLayout(this);
     auto listViewLayout = new QVBoxLayout;
@@ -76,7 +77,6 @@ CollectionAclWidget::CollectionAclWidget(QWidget *parent)
     auto view = new AclListView;
     view->setObjectName(QStringLiteral("list_view"));
     listViewLayout->addWidget(view);
-    mRecursiveChk = new QCheckBox(i18n("Apply permissions on all &subfolders."), this);
     listViewLayout->addWidget(mRecursiveChk);
     connect(mRecursiveChk, &QCheckBox::clicked, this, &CollectionAclWidget::slotRecursivePermissionChanged);
 
@@ -86,7 +86,7 @@ CollectionAclWidget::CollectionAclWidget(QWidget *parent)
 
     auto buttonBox = new QWidget;
     auto buttonBoxVBoxLayout = new QVBoxLayout(buttonBox);
-    buttonBoxVBoxLayout->setContentsMargins(0, 0, 0, 0);
+    buttonBoxVBoxLayout->setContentsMargins({});
     layout->addWidget(buttonBox);
 
     auto button = new ActionButton(buttonBox);
@@ -112,9 +112,7 @@ CollectionAclWidget::CollectionAclWidget(QWidget *parent)
     connect(mAclManager, &AclManager::collectionCanBeAdministrated, view, &AclListView::slotCollectionCanBeAdministrated);
 }
 
-CollectionAclWidget::~CollectionAclWidget()
-{
-}
+CollectionAclWidget::~CollectionAclWidget() = default;
 
 void CollectionAclWidget::slotCollectionCanBeAdministrated(bool b)
 {

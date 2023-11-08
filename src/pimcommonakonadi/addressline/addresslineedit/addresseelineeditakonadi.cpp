@@ -1,21 +1,17 @@
 /*
-   SPDX-FileCopyrightText: 2017-2021 Laurent Montel <montel@kde.org>
+   SPDX-FileCopyrightText: 2017-2022 Laurent Montel <montel@kde.org>
 
    SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
 #include "addresseelineeditakonadi.h"
-#include <AkonadiCore/Session>
+#include <Akonadi/Session>
 
 using namespace PimCommon;
 
-AddresseeLineEditAkonadi::AddresseeLineEditAkonadi()
-{
-}
+AddresseeLineEditAkonadi::AddresseeLineEditAkonadi() = default;
 
-AddresseeLineEditAkonadi::~AddresseeLineEditAkonadi()
-{
-}
+AddresseeLineEditAkonadi::~AddresseeLineEditAkonadi() = default;
 
 Akonadi::Session *AddresseeLineEditAkonadi::akonadiSession() const
 {

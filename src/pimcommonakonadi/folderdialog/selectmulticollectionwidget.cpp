@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -7,8 +7,8 @@
 #include "selectmulticollectionwidget.h"
 #include "folderdialog/checkedcollectionwidget.h"
 
-#include <CollectionFilterProxyModel>
-#include <EntityTreeModel>
+#include <Akonadi/CollectionFilterProxyModel>
+#include <Akonadi/EntityTreeModel>
 
 #include <KCheckableProxyModel>
 
@@ -29,14 +29,12 @@ SelectMultiCollectionWidget::SelectMultiCollectionWidget(const QString &mimetype
     initialize(mimetype);
 }
 
-SelectMultiCollectionWidget::~SelectMultiCollectionWidget()
-{
-}
+SelectMultiCollectionWidget::~SelectMultiCollectionWidget() = default;
 
 void SelectMultiCollectionWidget::initialize(const QString &mimetype)
 {
     auto vbox = new QVBoxLayout(this);
-    vbox->setContentsMargins(0, 0, 0, 0);
+    vbox->setContentsMargins({});
 
     mCheckedCollectionWidget = new PimCommon::CheckedCollectionWidget(mimetype);
 
@@ -83,7 +81,7 @@ QVector<Akonadi::Collection> SelectMultiCollectionWidget::selectedCollection(con
 
         const auto col = mCheckedCollectionWidget->checkableProxy()->data(child, Akonadi::EntityTreeModel::CollectionRole).value<Akonadi::Collection>();
 
-        if (mCheckedCollectionWidget->checkableProxy()->data(child, Qt::CheckStateRole).value<int>()) {
+        if (mCheckedCollectionWidget->checkableProxy()->data(child, Qt::CheckStateRole).toInt()) {
             lst << col;
         }
         lst << selectedCollection(child);

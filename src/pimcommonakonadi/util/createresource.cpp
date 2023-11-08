@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2012-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2012-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -9,9 +9,9 @@
 #include "pimcommonakonadi_debug.h"
 #include <KLocalizedString>
 
-#include <agentinstancecreatejob.h>
-#include <agentmanager.h>
-#include <agenttype.h>
+#include <Akonadi/AgentInstanceCreateJob>
+#include <Akonadi/AgentManager>
+#include <Akonadi/AgentType>
 
 #include <QDBusInterface>
 #include <QDBusReply>
@@ -26,9 +26,7 @@ CreateResource::CreateResource(QObject *parent)
 {
 }
 
-CreateResource::~CreateResource()
-{
-}
+CreateResource::~CreateResource() = default;
 
 // code from accountwizard
 static QVariant::Type argumentType(const QMetaObject *mo, const QString &method)
@@ -45,7 +43,6 @@ static QVariant::Type argumentType(const QMetaObject *mo, const QString &method)
 
     if (m.methodSignature().isEmpty()) {
         qCWarning(PIMCOMMONAKONADI_LOG) << "Did not find D-Bus method: " << method << " available methods are:";
-        const int numberOfMethod(mo->methodCount());
         for (int i = 0; i < numberOfMethod; ++i) {
             qCWarning(PIMCOMMONAKONADI_LOG) << mo->method(i).methodSignature();
         }
@@ -65,7 +62,7 @@ QString CreateResource::createResource(const QString &resources, const QString &
     const AgentType type = AgentManager::self()->type(resources);
     if (!type.isValid()) {
         Q_EMIT createResourceError(i18n("Resource type '%1' is not available.", resources));
-        return QString();
+        return {};
     }
 
     // check if unique instance already exists
@@ -76,7 +73,7 @@ QString CreateResource::createResource(const QString &resources, const QString &
             qCDebug(PIMCOMMONAKONADI_LOG) << instance.type().identifier() << (instance.type() == type);
             if (instance.type() == type) {
                 Q_EMIT createResourceInfo(i18n("Resource '%1' is already set up.", type.name()));
-                return QString();
+                return {};
             }
         }
     }
@@ -91,7 +88,7 @@ QString CreateResource::createResource(const QString &resources, const QString &
             QDBusInterface iface(QLatin1String("org.freedesktop.Akonadi.Resource.") + instance.identifier(), QStringLiteral("/Settings"));
             if (!iface.isValid()) {
                 Q_EMIT createResourceError(i18n("Unable to configure resource instance."));
-                return QString();
+                return {};
             }
 
             // configure resource
@@ -107,19 +104,19 @@ QString CreateResource::createResource(const QString &resources, const QString &
                 if (!arg.canConvert(targetType)) {
                     Q_EMIT createResourceError(
                         i18n("Could not convert value of setting '%1' to required type %2.", it.key(), QString::fromLatin1(QVariant::typeToName(targetType))));
-                    return QString();
+                    return {};
                 }
                 arg.convert(targetType);
                 QDBusReply<void> reply = iface.call(methodName, arg);
                 if (!reply.isValid()) {
                     Q_EMIT createResourceError(i18n("Could not set setting '%1': %2", it.key(), reply.error().message()));
-                    return QString();
+                    return {};
                 }
             }
             QDBusReply<void> reply = iface.call(QStringLiteral("save"));
             if (!reply.isValid()) {
                 Q_EMIT createResourceError(i18n("Could not save settings: %1", reply.error().message()));
-                return QString();
+                return {};
             }
             instance.reconfigure();
             if (synchronizeTree) {
@@ -134,5 +131,5 @@ QString CreateResource::createResource(const QString &resources, const QString &
             Q_EMIT createResourceError(i18n("Failed to create resource instance: %1", job->errorText()));
         }
     }
-    return QString();
+    return {};
 }

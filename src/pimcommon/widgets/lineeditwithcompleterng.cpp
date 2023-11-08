@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2017-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2017-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -15,16 +15,15 @@ using namespace PimCommon;
 #define MAX_COMPLETION_ITEMS 20
 LineEditWithCompleterNg::LineEditWithCompleterNg(QWidget *parent)
     : QLineEdit(parent)
+    , mCompleterListModel(new QStringListModel(this))
 {
     auto completer = new QCompleter(this);
-    mCompleterListModel = new QStringListModel(this);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
     completer->setModel(mCompleterListModel);
     setCompleter(completer);
 }
 
-LineEditWithCompleterNg::~LineEditWithCompleterNg()
-{
-}
+LineEditWithCompleterNg::~LineEditWithCompleterNg() = default;
 
 void LineEditWithCompleterNg::addCompletionItem(const QString &str)
 {

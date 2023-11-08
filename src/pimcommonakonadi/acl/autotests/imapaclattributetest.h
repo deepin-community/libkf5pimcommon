@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2014-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2014-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -12,7 +12,7 @@ class ImapAclAttributeTest : public QObject
     Q_OBJECT
 public:
     explicit ImapAclAttributeTest(QObject *parent = nullptr);
-    ~ImapAclAttributeTest();
+    ~ImapAclAttributeTest() override;
 private Q_SLOTS:
     void shouldHaveDefaultValue();
     void shouldBuildAttribute();
@@ -27,4 +27,3 @@ private Q_SLOTS:
     void testSerializeDeserialize();
     void testOldRights();
 };
-

@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2016-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2016-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -8,6 +8,7 @@
 
 #include <KLocalizedString>
 #include <KSharedConfig>
+#include <KTreeWidgetSearchLineWidget>
 
 #include <QAction>
 #include <QHeaderView>
@@ -19,12 +20,12 @@
 using namespace PimCommon;
 ConfigurePluginsListWidget::ConfigurePluginsListWidget(QWidget *parent)
     : QWidget(parent)
+    , mListWidget(new QTreeWidget(this))
 {
     auto mainLayout = new QVBoxLayout(this);
     mainLayout->setObjectName(QStringLiteral("mainlayout"));
-    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setContentsMargins({});
 
-    mListWidget = new QTreeWidget(this);
     mListWidget->setSortingEnabled(true);
     mListWidget->sortItems(0, Qt::AscendingOrder);
     mListWidget->setObjectName(QStringLiteral("listwidget"));
@@ -32,16 +33,20 @@ ConfigurePluginsListWidget::ConfigurePluginsListWidget(QWidget *parent)
     mListWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     mListWidget->setColumnCount(2);
     mListWidget->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    mListWidget->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    mListWidget->header()->setStretchLastSection(false);
+
+    mTreeWidgetSearchLineEdit = new KTreeWidgetSearchLineWidget(this, mListWidget);
+    mTreeWidgetSearchLineEdit->setObjectName(QStringLiteral("mTreeWidgetSearchLineEdit"));
 
     connect(mListWidget, &QTreeWidget::itemSelectionChanged, this, &ConfigurePluginsListWidget::slotItemSelectionChanged);
     connect(mListWidget, &QTreeWidget::itemChanged, this, &ConfigurePluginsListWidget::slotItemChanged);
 
+    mainLayout->addWidget(mTreeWidgetSearchLineEdit);
     mainLayout->addWidget(mListWidget);
 }
 
-ConfigurePluginsListWidget::~ConfigurePluginsListWidget()
-{
-}
+ConfigurePluginsListWidget::~ConfigurePluginsListWidget() = default;
 
 void ConfigurePluginsListWidget::slotItemChanged(QTreeWidgetItem *item, int column)
 {

@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2016-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2016-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -11,9 +11,7 @@ using namespace PimCommon;
 class PimCommon::AbstractGenericPluginInterfacePrivate
 {
 public:
-    AbstractGenericPluginInterfacePrivate()
-    {
-    }
+    AbstractGenericPluginInterfacePrivate() = default;
 
     AbstractGenericPlugin *plugin = nullptr;
     QWidget *parentWidget = nullptr;
@@ -25,10 +23,7 @@ AbstractGenericPluginInterface::AbstractGenericPluginInterface(QObject *parent)
 {
 }
 
-AbstractGenericPluginInterface::~AbstractGenericPluginInterface()
-{
-    delete d;
-}
+AbstractGenericPluginInterface::~AbstractGenericPluginInterface() = default;
 
 void AbstractGenericPluginInterface::setParentWidget(QWidget *parent)
 {
@@ -53,4 +48,25 @@ AbstractGenericPlugin *AbstractGenericPluginInterface::plugin() const
 void AbstractGenericPluginInterface::showConfigureDialog(QWidget *parentWidget)
 {
     Q_UNUSED(parentWidget)
+}
+
+ActionType::ActionType(QAction *action, ActionType::Type type)
+    : mAction(action)
+    , mType(type)
+{
+}
+
+QAction *ActionType::action() const
+{
+    return mAction;
+}
+
+ActionType::Type ActionType::type() const
+{
+    return mType;
+}
+
+bool ActionType::operator==(const ActionType &other) const
+{
+    return mAction == other.mAction && mType == other.mType;
 }

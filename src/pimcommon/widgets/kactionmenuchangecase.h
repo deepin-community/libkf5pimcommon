@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -22,7 +22,7 @@ class PIMCOMMON_EXPORT KActionMenuChangeCase : public KActionMenu
     Q_OBJECT
 public:
     explicit KActionMenuChangeCase(QObject *parent = nullptr);
-    ~KActionMenuChangeCase();
+    ~KActionMenuChangeCase() override;
 
     Q_REQUIRED_RESULT QAction *upperCaseAction() const;
 
@@ -41,7 +41,6 @@ Q_SIGNALS:
     void reverseCase();
 
 private:
-    KActionMenuChangeCasePrivate *const d;
+    std::unique_ptr<KActionMenuChangeCasePrivate> const d;
 };
 }
-

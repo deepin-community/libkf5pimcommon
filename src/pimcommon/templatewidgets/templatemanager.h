@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -8,6 +8,7 @@
 
 #include "pimcommon_export.h"
 #include <QObject>
+#include <memory>
 
 namespace PimCommon
 {
@@ -40,7 +41,6 @@ private:
     void initTemplatesDirectories(const QString &templatesRelativePath);
     TemplateInfo loadTemplate(const QString &themePath, const QString &defaultDesktopFileName);
 
-    TemplateManagerPrivate *const d;
+    std::unique_ptr<TemplateManagerPrivate> const d;
 };
 }
-

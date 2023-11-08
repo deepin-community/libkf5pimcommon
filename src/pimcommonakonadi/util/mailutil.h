@@ -8,7 +8,7 @@
 #pragma once
 
 #include "pimcommonakonadi_export.h"
-#include <AkonadiCore/collection.h>
+#include <Akonadi/Collection>
 
 namespace PimCommon
 {
@@ -22,4 +22,3 @@ Q_REQUIRED_RESULT PIMCOMMONAKONADI_EXPORT QString indexerServiceName();
 Q_REQUIRED_RESULT PIMCOMMONAKONADI_EXPORT bool isImapFolder(const Akonadi::Collection &col, bool &isOnline);
 }
 }
-

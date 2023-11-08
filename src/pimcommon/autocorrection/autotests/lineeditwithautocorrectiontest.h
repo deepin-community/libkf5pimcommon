@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2014-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2014-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -20,4 +20,3 @@ private Q_SLOTS:
     void shouldNotReplaceWordWhenInexactText();
     void shouldNotAddTwoSpace();
 };
-

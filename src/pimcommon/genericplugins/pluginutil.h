@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2016-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2016-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -22,9 +22,7 @@ namespace PimCommon
 class PIMCOMMON_EXPORT PluginUtilData
 {
 public:
-    PluginUtilData()
-    {
-    }
+    PluginUtilData() = default;
 
     QStringList mExtraInfo;
     QString mDescription;
@@ -44,4 +42,3 @@ savePluginSettings(const QString &groupName, const QString &prefixSettingKey, co
 Q_REQUIRED_RESULT PIMCOMMON_EXPORT PimCommon::PluginUtilData createPluginMetaData(const KPluginMetaData &metaData);
 }
 }
-

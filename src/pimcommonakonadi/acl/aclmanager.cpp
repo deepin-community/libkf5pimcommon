@@ -14,8 +14,8 @@
 #include "pimcommonakonadi_debug.h"
 #include "util/pimutil.h"
 
-#include <AkonadiCore/CollectionFetchJob>
-#include <AkonadiCore/ServerManager>
+#include <Akonadi/CollectionFetchJob>
+#include <Akonadi/ServerManager>
 
 #include <KEmailAddress>
 #include <KLocalizedString>
@@ -32,17 +32,21 @@ using namespace PimCommon;
 class AclModel : public QAbstractListModel
 {
 public:
-    enum Role { UserIdRole = Qt::UserRole + 1, PermissionsRole, PermissionsTextRole };
+    enum Role {
+        UserIdRole = Qt::UserRole + 1,
+        PermissionsRole,
+        PermissionsTextRole,
+    };
 
     AclModel(QObject *parent = nullptr)
         : QAbstractListModel(parent)
     {
     }
 
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
+    Q_REQUIRED_RESULT QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
     {
         if (index.row() < 0 || index.row() >= mRights.count()) {
-            return QVariant();
+            return {};
         }
 
         const QPair<QByteArray, KIMAP::Acl::Rights> right = mRights.at(index.row());
@@ -52,11 +56,11 @@ public:
         case UserIdRole:
             return QString::fromLatin1(right.first);
         case PermissionsRole:
-            return QVariant(static_cast<int>(right.second));
+            return {static_cast<int>(right.second)};
         case PermissionsTextRole:
             return AclUtils::permissionsToUserString(right.second);
         default:
-            return QVariant();
+            return {};
         }
     }
 
@@ -83,7 +87,7 @@ public:
         return false;
     }
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override
+    Q_REQUIRED_RESULT int rowCount(const QModelIndex &parent = QModelIndex()) const override
     {
         if (parent.isValid()) {
             return 0;
@@ -107,7 +111,7 @@ public:
         endResetModel();
     }
 
-    QMap<QByteArray, KIMAP::Acl::Rights> rights() const
+    Q_REQUIRED_RESULT QMap<QByteArray, KIMAP::Acl::Rights> rights() const
     {
         QMap<QByteArray, KIMAP::Acl::Rights> result;
 
@@ -146,10 +150,10 @@ private:
     QVector<QPair<QByteArray, KIMAP::Acl::Rights>> mRights;
 };
 
-class Q_DECL_HIDDEN PimCommon::AclManager::Private
+class Q_DECL_HIDDEN PimCommon::AclManager::AclManagerPrivate
 {
 public:
-    Private(AclManager *qq)
+    AclManagerPrivate(AclManager *qq)
         : q(qq)
     {
         mAddAction = new QAction(i18n("Add Entry..."), q);
@@ -177,9 +181,7 @@ public:
         });
     }
 
-    ~Private()
-    {
-    }
+    ~AclManagerPrivate() = default;
 
     void selectionChanged()
     {
@@ -358,14 +360,11 @@ public:
 
 AclManager::AclManager(QObject *parent)
     : QObject(parent)
-    , d(new Private(this))
+    , d(new AclManagerPrivate(this))
 {
 }
 
-AclManager::~AclManager()
-{
-    delete d;
-}
+AclManager::~AclManager() = default;
 
 void AclManager::setCollection(const Akonadi::Collection &collection)
 {

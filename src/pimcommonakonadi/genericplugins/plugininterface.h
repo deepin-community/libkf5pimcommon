@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -34,7 +34,7 @@ public:
     void setPluginName(const QString &name);
     void setPluginDirectory(const QString &name);
     void initializePlugins();
-    virtual void initializeInterfaceRequires(AbstractGenericPluginInterface *interface);
+    virtual bool initializeInterfaceRequires(AbstractGenericPluginInterface *interface);
     static QString actionXmlExtension(PimCommon::ActionType::Type type);
 
     void initializePluginActions(const QString &prefix, KXMLGUIClient *guiClient);
@@ -49,10 +49,9 @@ public:
     PimCommon::GenericPlugin *pluginFromIdentifier(const QString &id);
     void clearPluginActions(const QString &prefix, KXMLGUIClient *guiClient);
 private Q_SLOTS:
-    void slotPluginActivated(AbstractGenericPluginInterface *interface);
+    void slotPluginActivated(PimCommon::AbstractGenericPluginInterface *interface);
 
 private:
-    PluginInterfacePrivate *const d;
+    std::unique_ptr<PluginInterfacePrivate> const d;
 };
 }
-

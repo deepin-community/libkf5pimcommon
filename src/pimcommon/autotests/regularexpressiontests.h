@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -13,7 +13,7 @@ class RegularExpressionTests : public QObject
     Q_OBJECT
 public:
     explicit RegularExpressionTests(QObject *parent = nullptr);
-    ~RegularExpressionTests();
+    ~RegularExpressionTests() override;
 private Q_SLOTS:
     void shouldVerifyQStringListFilterConversion_data();
     void shouldVerifyQStringListFilterConversion();
@@ -48,4 +48,3 @@ private Q_SLOTS:
     void shouldCaptureValue_data();
     void shouldCaptureValue();
 };
-

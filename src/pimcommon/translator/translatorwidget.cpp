@@ -1,12 +1,13 @@
 /*
 
-  SPDX-FileCopyrightText: 2012-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2012-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 #include "translatorwidget.h"
-#include "googletranslator.h"
+#include "translatorconfiguredialog.h"
+#include "translatordebugdialog.h"
 #include "translatorutil.h"
 #include <KBusyIndicatorWidget>
 #include <PimCommon/NetworkManager>
@@ -24,7 +25,6 @@
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMimeData>
-#include <QNetworkConfigurationManager>
 #include <QPainter>
 #include <QShortcut>
 #include <QSplitter>
@@ -32,13 +32,14 @@
 #include <QVBoxLayout>
 
 using namespace PimCommon;
-
+namespace
+{
+static const char myTranslatorWidgetConfigGroupName[] = "TranslatorWidget";
+}
 class Q_DECL_HIDDEN TranslatorWidget::TranslatorWidgetPrivate
 {
 public:
-    TranslatorWidgetPrivate()
-    {
-    }
+    TranslatorWidgetPrivate() = default;
 
     ~TranslatorWidgetPrivate()
     {
@@ -48,32 +49,36 @@ public:
     void initLanguage();
     void fillToCombobox(const QString &lang);
 
-    QMap<QString, QMap<QString, QString>> listLanguage;
+    QVector<QPair<QString, QString>> listLanguage;
     QByteArray data;
     TranslatorTextEdit *inputText = nullptr;
     KPIMTextEdit::PlainTextEditorWidget *translatedText = nullptr;
     TranslatorResultTextEdit *translatorResultTextEdit = nullptr;
-    QComboBox *from = nullptr;
-    QComboBox *to = nullptr;
+    QComboBox *fromCombobox = nullptr;
+    QComboBox *toCombobox = nullptr;
     QPushButton *translate = nullptr;
     QPushButton *clear = nullptr;
-    PimCommon::GoogleTranslator *abstractTranslator = nullptr;
+    QLabel *engineNameLabel = nullptr;
+    PimCommon::TranslatorEngineBase *abstractTranslator = nullptr;
     KBusyIndicatorWidget *progressIndicator = nullptr;
     QPushButton *invert = nullptr;
     QSplitter *splitter = nullptr;
     bool languageSettingsChanged = false;
     bool standalone = true;
+    PimCommon::TranslatorEngineBase::TranslatorEngine engineType = PimCommon::TranslatorEngineBase::TranslatorEngine::Google;
 };
 
 void TranslatorWidget::TranslatorWidgetPrivate::fillToCombobox(const QString &lang)
 {
-    to->clear();
-    const QMap<QString, QString> list = listLanguage.value(lang);
-    QMap<QString, QString>::const_iterator i = list.constBegin();
-    QMap<QString, QString>::const_iterator end = list.constEnd();
-    while (i != end) {
-        to->addItem(i.key(), i.value());
-        ++i;
+    toCombobox->clear();
+
+    const int fullListLanguageSize(listLanguage.count());
+    TranslatorUtil translatorUtil;
+    for (int i = 0; i < fullListLanguageSize; ++i) {
+        const QPair<QString, QString> currentLanguage = listLanguage.at(i);
+        if ((i != 0) && currentLanguage.second != lang) {
+            translatorUtil.addItemToFromComboBox(toCombobox, currentLanguage);
+        }
     }
 }
 
@@ -82,12 +87,20 @@ void TranslatorWidget::TranslatorWidgetPrivate::initLanguage()
     if (!abstractTranslator) {
         return;
     }
-    listLanguage = abstractTranslator->initListLanguage(from);
+    toCombobox->clear();
+    fromCombobox->clear();
+    listLanguage = abstractTranslator->supportedLanguage();
+
+    const int fullListLanguageSize(listLanguage.count());
+    TranslatorUtil translatorUtil;
+    for (int i = 0; i < fullListLanguageSize; ++i) {
+        const QPair<QString, QString> currentLanguage = listLanguage.at(i);
+        translatorUtil.addItemToFromComboBox(fromCombobox, currentLanguage);
+    }
 }
 
 TranslatorResultTextEdit::TranslatorResultTextEdit(QWidget *parent)
     : KPIMTextEdit::PlainTextEditor(parent)
-    , mResultFailed(false)
 {
     setReadOnly(true);
 }
@@ -159,51 +172,56 @@ TranslatorWidget::~TranslatorWidget()
     disconnect(d->inputText, &TranslatorTextEdit::textChanged, this, &TranslatorWidget::slotTextChanged);
     disconnect(d->inputText, &TranslatorTextEdit::translateText, this, &TranslatorWidget::slotTranslate);
     writeConfig();
-    delete d;
 }
 
 void TranslatorWidget::writeConfig()
 {
-    KConfigGroup myGroup(KSharedConfig::openConfig(), "TranslatorWidget");
     if (d->languageSettingsChanged) {
-        myGroup.writeEntry(QStringLiteral("FromLanguage"), d->from->itemData(d->from->currentIndex()).toString());
-        myGroup.writeEntry("ToLanguage", d->to->itemData(d->to->currentIndex()).toString());
+        KConfigGroup myGroup(KSharedConfig::openConfig(), QStringLiteral("General"));
+        myGroup.writeEntry(QStringLiteral("FromLanguage"), d->fromCombobox->itemData(d->fromCombobox->currentIndex()).toString());
+        myGroup.writeEntry("ToLanguage", d->toCombobox->itemData(d->toCombobox->currentIndex()).toString());
+        myGroup.sync();
     }
-    myGroup.writeEntry("mainSplitter", d->splitter->sizes());
-    myGroup.sync();
+    KConfigGroup myGroupUi(KSharedConfig::openStateConfig(), myTranslatorWidgetConfigGroupName);
+    myGroupUi.writeEntry("mainSplitter", d->splitter->sizes());
+    myGroupUi.sync();
 }
 
 void TranslatorWidget::readConfig()
 {
-    KConfigGroup myGroup(KSharedConfig::openConfig(), "TranslatorWidget");
+    KConfigGroup myGroupUi(KSharedConfig::openStateConfig(), myTranslatorWidgetConfigGroupName);
+    const QList<int> size = {100, 400};
+    d->splitter->setSizes(myGroupUi.readEntry("mainSplitter", size));
+
+    KConfigGroup myGroup(KSharedConfig::openConfig(), QStringLiteral("General"));
     const QString from = myGroup.readEntry(QStringLiteral("FromLanguage"));
-    const QString to = myGroup.readEntry(QStringLiteral("ToLanguage"));
     if (from.isEmpty()) {
         return;
     }
-    const int indexFrom = d->from->findData(from);
+    const QString to = myGroup.readEntry(QStringLiteral("ToLanguage"));
+    const int indexFrom = d->fromCombobox->findData(from);
     if (indexFrom != -1) {
-        d->from->setCurrentIndex(indexFrom);
+        d->fromCombobox->setCurrentIndex(indexFrom);
     }
-    const int indexTo = d->to->findData(to);
+    const int indexTo = d->toCombobox->findData(to);
     if (indexTo != -1) {
-        d->to->setCurrentIndex(indexTo);
+        d->toCombobox->setCurrentIndex(indexTo);
     }
-    const QList<int> size = {100, 400};
-    d->splitter->setSizes(myGroup.readEntry("mainSplitter", size));
     d->invert->setEnabled(from != QLatin1String("auto"));
+}
+
+void TranslatorWidget::loadEngineSettings()
+{
+    d->engineType = TranslatorUtil::loadEngineSettings();
+    switchEngine();
 }
 
 void TranslatorWidget::init()
 {
-    d->abstractTranslator = new GoogleTranslator();
-    d->abstractTranslator->setParentWidget(this);
-    connect(d->abstractTranslator, &PimCommon::GoogleTranslator::translateDone, this, &TranslatorWidget::slotTranslateDone);
-    connect(d->abstractTranslator, &PimCommon::GoogleTranslator::translateFailed, this, &TranslatorWidget::slotTranslateFailed);
-
     auto layout = new QVBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins({});
     auto hboxLayout = new QHBoxLayout;
+    hboxLayout->setContentsMargins({});
     auto closeBtn = new QToolButton(this);
     closeBtn->setObjectName(QStringLiteral("close-button"));
     closeBtn->setIcon(QIcon::fromTheme(QStringLiteral("dialog-close")));
@@ -217,22 +235,22 @@ void TranslatorWidget::init()
     hboxLayout->addWidget(closeBtn);
     connect(closeBtn, &QToolButton::clicked, this, &TranslatorWidget::slotCloseWidget);
 
-    auto label = new QLabel(i18nc("Translate from language", "From:"));
+    auto label = new QLabel(i18nc("Translate from language", "From:"), this);
     hboxLayout->addWidget(label);
-    d->from = new QComboBox;
-    d->from->setMinimumWidth(50);
-    d->from->setObjectName(QStringLiteral("from"));
-    hboxLayout->addWidget(d->from);
+    d->fromCombobox = new QComboBox(this);
+    d->fromCombobox->setMinimumWidth(50);
+    d->fromCombobox->setObjectName(QStringLiteral("from"));
+    hboxLayout->addWidget(d->fromCombobox);
 
-    label = new QLabel(i18nc("Translate to language", "To:"));
+    label = new QLabel(i18nc("Translate to language", "To:"), this);
     hboxLayout->addWidget(label);
-    d->to = new QComboBox;
-    d->to->setMinimumWidth(50);
-    d->to->setObjectName(QStringLiteral("to"));
+    d->toCombobox = new QComboBox(this);
+    d->toCombobox->setMinimumWidth(50);
+    d->toCombobox->setObjectName(QStringLiteral("to"));
 
-    hboxLayout->addWidget(d->to);
+    hboxLayout->addWidget(d->toCombobox);
 
-    auto separator = new KSeparator;
+    auto separator = new KSeparator(this);
     separator->setOrientation(Qt::Vertical);
     hboxLayout->addWidget(separator);
 
@@ -249,7 +267,7 @@ void TranslatorWidget::init()
     connect(d->clear, &QPushButton::clicked, this, &TranslatorWidget::slotClear);
     hboxLayout->addWidget(d->clear);
 
-    d->translate = new QPushButton(i18n("Translate"));
+    d->translate = new QPushButton(i18n("Translate"), this);
     d->translate->setObjectName(QStringLiteral("translate-button"));
 #ifndef QT_NO_ACCESSIBILITY
     d->translate->setAccessibleName(i18n("Translate"));
@@ -266,8 +284,25 @@ void TranslatorWidget::init()
 
     d->progressIndicator = new KBusyIndicatorWidget(this);
     hboxLayout->addWidget(d->progressIndicator);
+    d->progressIndicator->setFixedHeight(d->toCombobox->height());
 
-    hboxLayout->addItem(new QSpacerItem(5, 5, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum));
+    hboxLayout->addStretch();
+
+    d->engineNameLabel = new QLabel(this);
+    hboxLayout->addWidget(d->engineNameLabel);
+
+    auto configureButton = new QToolButton(this);
+    configureButton->setObjectName(QStringLiteral("configure_button"));
+    configureButton->setIcon(QIcon::fromTheme(QStringLiteral("configure")));
+    configureButton->setIconSize(QSize(16, 16));
+    configureButton->setToolTip(i18n("Configure"));
+    connect(configureButton, &QToolButton::clicked, this, [this]() {
+        TranslatorConfigureDialog dlg(this);
+        if (dlg.exec()) {
+            loadEngineSettings();
+        }
+    });
+    hboxLayout->addWidget(configureButton);
 
     layout->addLayout(hboxLayout);
 
@@ -281,7 +316,7 @@ void TranslatorWidget::init()
     connect(d->inputText, &TranslatorTextEdit::translateText, this, &TranslatorWidget::slotTranslate);
 
     d->splitter->addWidget(editorWidget);
-    d->translatorResultTextEdit = new TranslatorResultTextEdit;
+    d->translatorResultTextEdit = new TranslatorResultTextEdit(this);
     d->translatedText = new KPIMTextEdit::PlainTextEditorWidget(d->translatorResultTextEdit, this);
     d->translatedText->setObjectName(QStringLiteral("translatedtext"));
     d->translatedText->setReadOnly(true);
@@ -289,23 +324,35 @@ void TranslatorWidget::init()
 
     layout->addWidget(d->splitter);
 
-    d->initLanguage();
-    d->from->setCurrentIndex(0); // Fill "to" combobox
+    d->fromCombobox->setCurrentIndex(0); // Fill "to" combobox
+    loadEngineSettings();
+    switchEngine();
     slotFromLanguageChanged(0, true);
     slotTextChanged();
     readConfig();
-    connect(d->from, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int val) {
+    connect(d->fromCombobox, &QComboBox::currentIndexChanged, this, [this](int val) {
         slotFromLanguageChanged(val, false);
         slotConfigChanged();
     });
-    connect(d->to, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() {
+    connect(d->toCombobox, &QComboBox::currentIndexChanged, this, [this]() {
         slotConfigChanged();
         slotTranslate();
     });
 
     hide();
-    setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
+    setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum));
     d->languageSettingsChanged = false;
+}
+
+void TranslatorWidget::switchEngine()
+{
+    disconnect(d->abstractTranslator);
+    delete d->abstractTranslator;
+    d->abstractTranslator = TranslatorUtil::switchEngine(d->engineType, this);
+    connect(d->abstractTranslator, &PimCommon::TranslatorEngineBase::translateDone, this, &TranslatorWidget::slotTranslateDone);
+    connect(d->abstractTranslator, &PimCommon::TranslatorEngineBase::translateFailed, this, &TranslatorWidget::slotTranslateFailed);
+    d->initLanguage();
+    d->engineNameLabel->setText(QStringLiteral("[%1]").arg(d->abstractTranslator->engineName()));
 }
 
 void TranslatorWidget::slotConfigChanged()
@@ -321,15 +368,15 @@ void TranslatorWidget::slotTextChanged()
 
 void TranslatorWidget::slotFromLanguageChanged(int index, bool initialize)
 {
-    const QString lang = d->from->itemData(index).toString();
+    const QString lang = d->fromCombobox->itemData(index).toString();
     d->invert->setEnabled(lang != QLatin1String("auto"));
-    const QString to = d->to->itemData(d->to->currentIndex()).toString();
-    d->to->blockSignals(true);
+    const QString to = d->toCombobox->itemData(d->toCombobox->currentIndex()).toString();
+    d->toCombobox->blockSignals(true);
     d->fillToCombobox(lang);
-    d->to->blockSignals(false);
-    const int indexTo = d->to->findData(to);
+    d->toCombobox->blockSignals(false);
+    const int indexTo = d->toCombobox->findData(to);
     if (indexTo != -1) {
-        d->to->setCurrentIndex(indexTo);
+        d->toCombobox->setCurrentIndex(indexTo);
     }
     if (!initialize) {
         slotTranslate();
@@ -344,7 +391,7 @@ void TranslatorWidget::setTextToTranslate(const QString &text)
 
 void TranslatorWidget::slotTranslate()
 {
-    if (!PimCommon::NetworkManager::self()->networkConfigureManager()->isOnline()) {
+    if (!PimCommon::NetworkManager::self()->isOnline()) {
         KMessageBox::information(this, i18n("No network connection detected, we cannot translate text."), i18n("No network"));
         return;
     }
@@ -355,15 +402,18 @@ void TranslatorWidget::slotTranslate()
 
     d->translatorResultTextEdit->clear();
 
-    const QString from = d->from->itemData(d->from->currentIndex()).toString();
-    const QString to = d->to->itemData(d->to->currentIndex()).toString();
+    const QString from = d->fromCombobox->itemData(d->fromCombobox->currentIndex()).toString();
+    const QString to = d->toCombobox->itemData(d->toCombobox->currentIndex()).toString();
     d->translate->setEnabled(false);
     d->progressIndicator->show();
 
-    d->abstractTranslator->setFrom(from);
-    d->abstractTranslator->setTo(to);
-    d->abstractTranslator->setInputText(d->inputText->toPlainText());
-    d->abstractTranslator->translate();
+    const QString inputText{d->inputText->toPlainText()};
+    if (!inputText.isEmpty() && !from.isEmpty() && !to.isEmpty()) {
+        d->abstractTranslator->setFrom(from);
+        d->abstractTranslator->setTo(to);
+        d->abstractTranslator->setInputText(inputText);
+        d->abstractTranslator->translate();
+    }
 }
 
 void TranslatorWidget::slotTranslateDone()
@@ -387,20 +437,20 @@ void TranslatorWidget::slotTranslateFailed(bool signalFailed, const QString &mes
 
 void TranslatorWidget::slotInvertLanguage()
 {
-    const QString fromLanguage = d->from->itemData(d->from->currentIndex()).toString();
+    const QString fromLanguage = d->fromCombobox->itemData(d->fromCombobox->currentIndex()).toString();
     // don't invert when fromLanguage == auto
     if (fromLanguage == QLatin1String("auto")) {
         return;
     }
 
-    const QString toLanguage = d->to->itemData(d->to->currentIndex()).toString();
-    const int indexFrom = d->from->findData(toLanguage);
+    const QString toLanguage = d->toCombobox->itemData(d->toCombobox->currentIndex()).toString();
+    const int indexFrom = d->fromCombobox->findData(toLanguage);
     if (indexFrom != -1) {
-        d->from->setCurrentIndex(indexFrom);
+        d->fromCombobox->setCurrentIndex(indexFrom);
     }
-    const int indexTo = d->to->findData(fromLanguage);
+    const int indexTo = d->toCombobox->findData(fromLanguage);
     if (indexTo != -1) {
-        d->to->setCurrentIndex(indexTo);
+        d->toCombobox->setCurrentIndex(indexTo);
     }
     slotTranslate();
 }
@@ -451,5 +501,7 @@ void TranslatorWidget::slotClear()
 
 void TranslatorWidget::slotDebug()
 {
-    d->abstractTranslator->debug();
+    TranslatorDebugDialog dlg(this);
+    dlg.setDebug(d->abstractTranslator->jsonDebug());
+    dlg.exec();
 }

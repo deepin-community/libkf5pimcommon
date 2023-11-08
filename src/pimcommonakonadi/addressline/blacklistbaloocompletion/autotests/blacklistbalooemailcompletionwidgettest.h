@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
@@ -14,11 +14,10 @@ class BlackListBalooEmailCompletionWidgetTest : public QObject
     Q_OBJECT
 public:
     explicit BlackListBalooEmailCompletionWidgetTest(QObject *parent = nullptr);
-    ~BlackListBalooEmailCompletionWidgetTest();
+    ~BlackListBalooEmailCompletionWidgetTest() override;
 
 private Q_SLOTS:
     void shouldHaveDefaultValue();
     void shouldEnablePushButtonWhenTestSizeSupperiorToTwo();
     void shouldChangeEnableSelectUnSelectButton();
 };
-

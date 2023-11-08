@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -22,13 +22,10 @@ public:
     Q_REQUIRED_RESULT bool recursive() const;
     void setEnableRecursiveCheckBox(bool enable);
 
-private Q_SLOTS:
+private:
     void slotRecursivePermissionChanged();
     void slotCollectionCanBeAdministrated(bool b);
-
-private:
-    PimCommon::AclManager *mAclManager = nullptr;
-    QCheckBox *mRecursiveChk = nullptr;
+    PimCommon::AclManager *const mAclManager;
+    QCheckBox *const mRecursiveChk;
 };
 }
-

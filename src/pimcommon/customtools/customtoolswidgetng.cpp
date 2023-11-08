@@ -1,12 +1,11 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 #include "customtoolswidgetng.h"
 #include "customtoolsplugin.h"
-#include "customtoolspluginmanager.h"
 #include "customtoolsviewinterface.h"
 
 #include <KToggleAction>
@@ -19,9 +18,7 @@ using namespace PimCommon;
 class PimCommon::CustomToolsWidgetNgPrivate
 {
 public:
-    CustomToolsWidgetNgPrivate()
-    {
-    }
+    CustomToolsWidgetNgPrivate() = default;
 
     QStackedWidget *mStackedWidget = nullptr;
     QList<PimCommon::CustomToolsViewInterface *> mListInterfaceView;
@@ -38,10 +35,7 @@ CustomToolsWidgetNg::CustomToolsWidgetNg(QWidget *parent)
     hide();
 }
 
-CustomToolsWidgetNg::~CustomToolsWidgetNg()
-{
-    delete d;
-}
+CustomToolsWidgetNg::~CustomToolsWidgetNg() = default;
 
 void CustomToolsWidgetNg::addCustomToolViewInterface(PimCommon::CustomToolsViewInterface *plugin)
 {
@@ -96,11 +90,12 @@ QList<KToggleAction *> CustomToolsWidgetNg::actionList() const
 void CustomToolsWidgetNg::setText(const QString &text)
 {
     if (isVisible()) {
-        for (PimCommon::CustomToolsViewInterface *interface : std::as_const(d->mListInterfaceView)) {
-            if (interface == d->mStackedWidget->currentWidget()) {
-                interface->setText(text);
-                break;
-            }
+        auto currentWidget = d->mStackedWidget->currentWidget();
+        auto it = std::find_if(d->mListInterfaceView.cbegin(), d->mListInterfaceView.cend(), [currentWidget](auto interface) {
+            return interface == currentWidget;
+        });
+        if (it != d->mListInterfaceView.cend()) {
+            (*it)->setText(text);
         }
     }
 }

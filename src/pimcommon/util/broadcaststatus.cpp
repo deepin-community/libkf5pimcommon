@@ -35,9 +35,7 @@ BroadcastStatus *BroadcastStatus::instance()
 class BroadcastStatusPrivate
 {
 public:
-    BroadcastStatusPrivate()
-    {
-    }
+    BroadcastStatusPrivate() = default;
 
     QString mStatusMsg;
     bool mTransientActive = false;
@@ -51,7 +49,6 @@ BroadcastStatus::BroadcastStatus()
 BroadcastStatus::~BroadcastStatus()
 {
     instance_ = nullptr;
-    delete d;
 }
 
 void BroadcastStatus::setStatusMsg(const QString &message)

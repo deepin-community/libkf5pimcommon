@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -7,7 +7,7 @@
 #pragma once
 
 #include "pimcommonakonadi_export.h"
-#include <AkonadiCore/Item>
+#include <Akonadi/Item>
 #include <PimCommon/AbstractGenericPluginInterface>
 
 namespace PimCommon
@@ -24,7 +24,13 @@ public:
     explicit GenericPluginInterface(QObject *parent = nullptr);
     ~GenericPluginInterface() override;
 
-    enum RequireType { None = 0, CurrentItems = 1, Items = 2, CurrentCollection = 3, Collections = 4 };
+    enum RequireType {
+        None = 0,
+        CurrentItems = 1,
+        Items = 2,
+        CurrentCollection = 3,
+        Collections = 4,
+    };
     Q_ENUM(RequireType)
     Q_DECLARE_FLAGS(RequireTypes, RequireType)
 
@@ -42,7 +48,7 @@ public:
     virtual void updateActions(int numberOfSelectedItems, int numberOfSelectedCollections);
 
 private:
-    GenericPluginInterfacePrivate *const d;
+    std::unique_ptr<GenericPluginInterfacePrivate> const d;
 };
 }
 Q_DECLARE_TYPEINFO(PimCommon::ActionType, Q_MOVABLE_TYPE);

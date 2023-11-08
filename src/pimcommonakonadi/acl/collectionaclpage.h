@@ -9,7 +9,7 @@
 #pragma once
 
 #include "pimcommonakonadi_export.h"
-#include <AkonadiWidgets/CollectionPropertiesPage>
+#include <Akonadi/CollectionPropertiesPage>
 
 namespace PimCommon
 {
@@ -34,8 +34,7 @@ protected:
     void init();
 
 private:
-    CollectionAclPagePrivate *const d;
+    std::unique_ptr<CollectionAclPagePrivate> const d;
 };
 AKONADI_COLLECTION_PROPERTIES_PAGE_FACTORY(CollectionAclPageFactory, CollectionAclPage)
 }
-

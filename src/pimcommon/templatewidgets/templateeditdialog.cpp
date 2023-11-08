@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -24,8 +24,10 @@ using namespace PimCommon;
 
 TemplateEditDialog::TemplateEditDialog(QWidget *parent, bool defaultTemplate)
     : QDialog(parent)
+    , mTextEdit(new KPIMTextEdit::PlainTextEditorWidget(this))
+    , mTemplateNameEdit(new QLineEdit(this))
 {
-    setWindowTitle(defaultTemplate ? i18n("Default template") : i18n("Template"));
+    setWindowTitle(defaultTemplate ? i18nc("@title:window", "Default template") : i18nc("@title:window", "Template"));
     auto mainLayout = new QVBoxLayout(this);
     QDialogButtonBox *buttonBox = nullptr;
     if (defaultTemplate) {
@@ -45,13 +47,12 @@ TemplateEditDialog::TemplateEditDialog(QWidget *parent, bool defaultTemplate)
     mainLayout->addWidget(buttonBox);
 
     auto vbox = new QVBoxLayout;
-    vbox->setContentsMargins(0, 0, 0, 0);
+    vbox->setContentsMargins({});
 
     auto hbox = new QHBoxLayout;
     auto label = new QLabel(i18n("Name:"));
     hbox->addWidget(label);
 
-    mTemplateNameEdit = new QLineEdit;
     new KPIM::LineEditCatchReturnKey(mTemplateNameEdit, this);
     mTemplateNameEdit->setClearButtonEnabled(!defaultTemplate);
     mTemplateNameEdit->setReadOnly(defaultTemplate);
@@ -59,7 +60,6 @@ TemplateEditDialog::TemplateEditDialog(QWidget *parent, bool defaultTemplate)
 
     vbox->addLayout(hbox);
 
-    mTextEdit = new KPIMTextEdit::PlainTextEditorWidget;
     mTextEdit->setReadOnly(defaultTemplate);
     vbox->addWidget(mTextEdit);
 

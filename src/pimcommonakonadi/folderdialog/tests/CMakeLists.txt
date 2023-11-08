@@ -1,7 +1,7 @@
-set(selectmultiselectiondialog_gui_SRCS selectmultiselectiondialog_gui.cpp)
-add_executable(selectmultiselectiondialog_gui ${selectmultiselectiondialog_gui_SRCS})
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileCopyrightText: none
+add_executable(selectmultiselectiondialog_gui selectmultiselectiondialog_gui.cpp)
 target_link_libraries(selectmultiselectiondialog_gui
-  KF5::Mime
   KF5::PimCommonAkonadi
   KF5::I18n
 )

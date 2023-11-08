@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -9,10 +9,13 @@
 #include "pimcommon_export.h"
 
 #include <PimCommon/SpellCheckLineEdit>
+namespace PimCommonAutoCorrection
+{
+class AutoCorrection;
+}
 
 namespace PimCommon
 {
-class AutoCorrection;
 class LineEditWithAutoCorrectionPrivate;
 /**
  * @brief The LineEditWithAutoCorrection class
@@ -25,16 +28,15 @@ public:
     explicit LineEditWithAutoCorrection(QWidget *parent, const QString &configFile);
     ~LineEditWithAutoCorrection() override;
 
-    Q_REQUIRED_RESULT PimCommon::AutoCorrection *autocorrection() const;
+    Q_REQUIRED_RESULT PimCommonAutoCorrection::AutoCorrection *autocorrection() const;
 
-    void setAutocorrection(PimCommon::AutoCorrection *autocorrect);
+    void setAutocorrection(PimCommonAutoCorrection::AutoCorrection *autocorrect);
     void setAutocorrectionLanguage(const QString &language);
 
 protected:
     void keyPressEvent(QKeyEvent *e) override;
 
 private:
-    LineEditWithAutoCorrectionPrivate *const d;
+    std::unique_ptr<LineEditWithAutoCorrectionPrivate> const d;
 };
 }
-

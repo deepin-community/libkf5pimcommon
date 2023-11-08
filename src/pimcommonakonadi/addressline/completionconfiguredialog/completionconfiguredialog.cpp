@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
@@ -26,9 +26,7 @@ using namespace PimCommon;
 class PimCommon::CompletionConfigureDialogPrivate
 {
 public:
-    CompletionConfigureDialogPrivate()
-    {
-    }
+    CompletionConfigureDialogPrivate() = default;
 
     QTabWidget *mTabWidget = nullptr;
     PimCommon::CompletionOrderWidget *mCompletionOrderWidget = nullptr;
@@ -74,7 +72,6 @@ CompletionConfigureDialog::CompletionConfigureDialog(QWidget *parent)
 CompletionConfigureDialog::~CompletionConfigureDialog()
 {
     writeConfig();
-    delete d;
 }
 
 void CompletionConfigureDialog::readConfig()

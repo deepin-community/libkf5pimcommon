@@ -1,12 +1,12 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 #pragma once
 #include "pimcommonakonadi_export.h"
-#include <Collection>
+#include <Akonadi/Collection>
 #include <QDialog>
 
 namespace PimCommon
@@ -30,7 +30,6 @@ private:
     void initialize(const QString &mimetype, const QList<Akonadi::Collection::Id> &selectedCollection = QList<Akonadi::Collection::Id>());
     void writeConfig();
     void readConfig();
-    SelectMultiCollectionDialogPrivate *const d;
+    std::unique_ptr<SelectMultiCollectionDialogPrivate> const d;
 };
 }
-

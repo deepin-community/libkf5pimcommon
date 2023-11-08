@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
@@ -31,9 +31,7 @@ BlackListBalooEmailWarning::BlackListBalooEmailWarning(QWidget *parent)
     addAction(searchAction);
 }
 
-BlackListBalooEmailWarning::~BlackListBalooEmailWarning()
-{
-}
+BlackListBalooEmailWarning::~BlackListBalooEmailWarning() = default;
 
 void BlackListBalooEmailWarning::slotSaveBlackList()
 {

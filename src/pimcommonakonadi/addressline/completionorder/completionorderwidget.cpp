@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
@@ -15,10 +15,10 @@
 #include <KContacts/ContactGroup>
 #include <KLDAP/LdapClientSearchConfig>
 
-#include <AkonadiCore/ChangeRecorder>
-#include <AkonadiCore/CollectionFilterProxyModel>
-#include <AkonadiCore/EntityTreeModel>
-#include <AkonadiCore/Monitor>
+#include <Akonadi/ChangeRecorder>
+#include <Akonadi/CollectionFilterProxyModel>
+#include <Akonadi/EntityTreeModel>
+#include <Akonadi/Monitor>
 
 #include <kldap/ldapserver.h>
 
@@ -42,23 +42,23 @@ CompletionOrderEditorAdaptor::CompletionOrderEditorAdaptor(QObject *parent)
 class LDAPCompletionItem : public CompletionItem
 {
 public:
-    LDAPCompletionItem(KLDAP::LdapClient *ldapClient)
+    explicit LDAPCompletionItem(KLDAP::LdapClient *ldapClient)
         : mLdapClient(ldapClient)
     {
         mWeight = mLdapClient->completionWeight();
     }
 
-    QString label() const override
+    Q_REQUIRED_RESULT QString label() const override
     {
         return i18n("LDAP server %1", mLdapClient->server().host());
     }
 
-    QIcon icon() const override
+    Q_REQUIRED_RESULT QIcon icon() const override
     {
         return QIcon::fromTheme(QStringLiteral("kmail"));
     }
 
-    int completionWeight() const override
+    Q_REQUIRED_RESULT int completionWeight() const override
     {
         return mWeight;
     }
@@ -71,12 +71,12 @@ public:
         group.sync();
     }
 
-    bool hasEnableSupport() const override
+    Q_REQUIRED_RESULT bool hasEnableSupport() const override
     {
         return false;
     }
 
-    bool isEnabled() const override
+    Q_REQUIRED_RESULT bool isEnabled() const override
     {
         return true;
     }
@@ -114,16 +114,14 @@ public:
         }
     }
 
-    ~SimpleCompletionItem() override
-    {
-    }
+    ~SimpleCompletionItem() override = default;
 
-    bool isEnabled() const override
+    Q_REQUIRED_RESULT bool isEnabled() const override
     {
         return mEnabled;
     }
 
-    bool hasEnableSupport() const override
+    Q_REQUIRED_RESULT bool hasEnableSupport() const override
     {
         return mHasEnableSupport;
     }
@@ -133,17 +131,17 @@ public:
         mIcon = icon;
     }
 
-    QString label() const override
+    Q_REQUIRED_RESULT QString label() const override
     {
         return mLabel;
     }
 
-    QIcon icon() const override
+    Q_REQUIRED_RESULT QIcon icon() const override
     {
         return mIcon;
     }
 
-    int completionWeight() const override
+    Q_REQUIRED_RESULT int completionWeight() const override
     {
         return mWeight;
     }
@@ -207,7 +205,7 @@ public:
         }
     }
 
-    CompletionItem *item() const
+    Q_REQUIRED_RESULT CompletionItem *item() const
     {
         return mItem;
     }
@@ -235,7 +233,7 @@ CompletionOrderWidget::CompletionOrderWidget(QWidget *parent)
 
     auto page = new QWidget(this);
     auto pageHBoxLayout = new QHBoxLayout(page);
-    pageHBoxLayout->setContentsMargins(0, 0, 0, 0);
+    pageHBoxLayout->setContentsMargins({});
     hbox->addWidget(page);
     mListView = new QTreeWidget(page);
     mListView->setObjectName(QStringLiteral("listview"));
@@ -250,7 +248,7 @@ CompletionOrderWidget::CompletionOrderWidget(QWidget *parent)
 
     auto upDownBox = new QWidget(page);
     auto upDownBoxVBoxLayout = new QVBoxLayout(upDownBox);
-    upDownBoxVBoxLayout->setContentsMargins(0, 0, 0, 0);
+    upDownBoxVBoxLayout->setContentsMargins({});
     pageHBoxLayout->addWidget(upDownBox);
     mUpButton = new QPushButton(upDownBox);
     upDownBoxVBoxLayout->addWidget(mUpButton);
@@ -281,9 +279,7 @@ CompletionOrderWidget::CompletionOrderWidget(QWidget *parent)
     connect(mDownButton, &QAbstractButton::clicked, this, &CompletionOrderWidget::slotMoveDown);
 }
 
-CompletionOrderWidget::~CompletionOrderWidget()
-{
-}
+CompletionOrderWidget::~CompletionOrderWidget() = default;
 
 void CompletionOrderWidget::save()
 {

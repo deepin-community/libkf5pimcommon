@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -15,7 +15,7 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 
-#include <KXmlGui/kactioncollection.h>
+#include <KActionCollection>
 
 CustomToolWidgetNgTest::CustomToolWidgetNgTest(QWidget *parent)
     : QWidget(parent)
@@ -35,9 +35,7 @@ CustomToolWidgetNgTest::CustomToolWidgetNgTest(QWidget *parent)
     lay->addWidget(mCustomTools);
 }
 
-CustomToolWidgetNgTest::~CustomToolWidgetNgTest()
-{
-}
+CustomToolWidgetNgTest::~CustomToolWidgetNgTest() = default;
 
 int main(int argc, char **argv)
 {

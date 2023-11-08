@@ -1,14 +1,14 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 #include "checkedcollectionwidget.h"
-#include <CollectionFilterProxyModel>
+#include <Akonadi/CollectionFilterProxyModel>
 
-#include <EntityTreeModel>
-#include <Monitor>
+#include <Akonadi/EntityTreeModel>
+#include <Akonadi/Monitor>
 #include <QSortFilterProxyModel>
 
 #include <KCheckableProxyModel>
@@ -23,9 +23,7 @@ using namespace PimCommon;
 class PimCommon::CheckedCollectionWidgetPrivate
 {
 public:
-    CheckedCollectionWidgetPrivate()
-    {
-    }
+    CheckedCollectionWidgetPrivate() = default;
 
     QTreeView *mFolderView = nullptr;
     QItemSelectionModel *mSelectionModel = nullptr;
@@ -40,7 +38,7 @@ CheckedCollectionWidget::CheckedCollectionWidget(const QString &mimetype, QWidge
     , d(new PimCommon::CheckedCollectionWidgetPrivate)
 {
     auto vbox = new QVBoxLayout(this);
-    vbox->setContentsMargins(0, 0, 0, 0);
+    vbox->setContentsMargins({});
 
     // Create a new change recorder.
     auto monitor = new Akonadi::Monitor(this);
@@ -85,10 +83,7 @@ CheckedCollectionWidget::CheckedCollectionWidget(const QString &mimetype, QWidge
     vbox->addWidget(d->mFolderView);
 }
 
-CheckedCollectionWidget::~CheckedCollectionWidget()
-{
-    delete d;
-}
+CheckedCollectionWidget::~CheckedCollectionWidget() = default;
 
 Akonadi::EntityTreeModel *CheckedCollectionWidget::entityTreeModel() const
 {

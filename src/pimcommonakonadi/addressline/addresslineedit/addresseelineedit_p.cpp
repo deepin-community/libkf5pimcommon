@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -11,12 +11,12 @@
 #include "kmailcompletion.h"
 #include "pimcommonakonadi_debug.h"
 
-#include <Akonadi/Contact/ContactGroupSearchJob>
-#include <Akonadi/Contact/ContactSearchJob>
-#include <AkonadiCore/CollectionFetchJob>
-#include <AkonadiCore/ItemFetchScope>
-#include <AkonadiCore/Job>
-#include <AkonadiCore/Session>
+#include <Akonadi/CollectionFetchJob>
+#include <Akonadi/ContactGroupSearchJob>
+#include <Akonadi/ContactSearchJob>
+#include <Akonadi/ItemFetchScope>
+#include <Akonadi/Job>
+#include <Akonadi/Session>
 #include <KColorScheme>
 #include <KCompletionBox>
 #include <KConfigGroup>
@@ -27,11 +27,11 @@
 #include <QToolButton>
 #include <config-akonadi-search.h>
 #if !DISABLE_AKONADI_SEARCH
-#include <AkonadiSearch/PIM/contactcompleter.h>
+#include <PIM/contactcompleter.h>
 #endif
 
+#include <Akonadi/ContactSearchJob>
 #include <addressline/addresslineedit/baloocompletionemail.h>
-#include <akonadi/contact/contactsearchjob.h>
 
 using namespace PimCommon;
 AddresseeLineEditPrivate::AddresseeLineEditPrivate(PimCommon::AddresseeLineEdit *qq, bool enableCompletion)

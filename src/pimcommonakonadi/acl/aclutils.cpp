@@ -7,28 +7,28 @@
 
 #include "aclutils_p.h"
 
+#include <KLazyLocalizedString>
 #include <KLocalizedString>
 
 using namespace PimCommon;
 
 static const struct {
     KIMAP::Acl::Rights permissions;
-    const char *context;
-    const char *userString;
+    const KLazyLocalizedString userString;
 } standardPermissions[] = {
-    {KIMAP::Acl::None, I18NC_NOOP("Permissions", "None")},
+    {KIMAP::Acl::None, kli18nc("Permissions", "None")},
 
-    {KIMAP::Acl::Lookup | KIMAP::Acl::Read | KIMAP::Acl::KeepSeen, I18NC_NOOP("Permissions", "Read")},
+    {KIMAP::Acl::Lookup | KIMAP::Acl::Read | KIMAP::Acl::KeepSeen, kli18nc("Permissions", "Read")},
 
-    {KIMAP::Acl::Lookup | KIMAP::Acl::Read | KIMAP::Acl::KeepSeen | KIMAP::Acl::Insert | KIMAP::Acl::Post, I18NC_NOOP("Permissions", "Append")},
+    {KIMAP::Acl::Lookup | KIMAP::Acl::Read | KIMAP::Acl::KeepSeen | KIMAP::Acl::Insert | KIMAP::Acl::Post, kli18nc("Permissions", "Append")},
 
     {KIMAP::Acl::Lookup | KIMAP::Acl::Read | KIMAP::Acl::KeepSeen | KIMAP::Acl::Insert | KIMAP::Acl::Post | KIMAP::Acl::Write | KIMAP::Acl::CreateMailbox
          | KIMAP::Acl::DeleteMailbox | KIMAP::Acl::DeleteMessage | KIMAP::Acl::Expunge,
-     I18NC_NOOP("Permissions", "Write")},
+     kli18nc("Permissions", "Write")},
 
     {KIMAP::Acl::Lookup | KIMAP::Acl::Read | KIMAP::Acl::KeepSeen | KIMAP::Acl::Insert | KIMAP::Acl::Post | KIMAP::Acl::Write | KIMAP::Acl::CreateMailbox
          | KIMAP::Acl::DeleteMailbox | KIMAP::Acl::DeleteMessage | KIMAP::Acl::Expunge | KIMAP::Acl::Admin,
-     I18NC_NOOP("Permissions", "All")}};
+     kli18nc("Permissions", "All")}};
 
 uint AclUtils::standardPermissionsCount()
 {
@@ -59,7 +59,7 @@ QString AclUtils::permissionsToUserString(KIMAP::Acl::Rights permissions)
     const uint maxSize(sizeof(standardPermissions) / sizeof(*standardPermissions));
     for (uint i = 0; i < maxSize; ++i) {
         if (KIMAP::Acl::normalizedRights(permissions) == standardPermissions[i].permissions) {
-            return i18nc(standardPermissions[i].context, standardPermissions[i].userString);
+            return KLocalizedString(standardPermissions[i].userString).toString();
         }
     }
 

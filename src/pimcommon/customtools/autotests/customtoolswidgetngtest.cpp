@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -16,9 +16,7 @@ CustomToolsWidgetNgTest::CustomToolsWidgetNgTest(QObject *parent)
     QStandardPaths::setTestModeEnabled(true);
 }
 
-CustomToolsWidgetNgTest::~CustomToolsWidgetNgTest()
-{
-}
+CustomToolsWidgetNgTest::~CustomToolsWidgetNgTest() = default;
 
 void CustomToolsWidgetNgTest::shouldHaveDefaultValue()
 {

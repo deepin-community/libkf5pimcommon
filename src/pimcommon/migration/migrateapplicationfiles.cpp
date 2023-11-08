@@ -1,10 +1,11 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 #include "migrateapplicationfiles.h"
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include "pimcommon_debug.h"
 
 #include <KConfigGroup>
@@ -33,10 +34,7 @@ MigrateApplicationFiles::MigrateApplicationFiles(QObject *parent)
 {
 }
 
-MigrateApplicationFiles::~MigrateApplicationFiles()
-{
-    delete d;
-}
+MigrateApplicationFiles::~MigrateApplicationFiles() = default;
 
 void MigrateApplicationFiles::finished()
 {
@@ -240,3 +238,4 @@ void MigrateApplicationFiles::insertMigrateInfo(const MigrateFileInfo &info)
         d->mMigrateInfoList.append(info);
     }
 }
+#endif

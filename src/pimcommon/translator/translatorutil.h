@@ -1,11 +1,12 @@
 /*
-  SPDX-FileCopyrightText: 2012-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2012-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 #pragma once
 
+#include "translatorenginebase.h"
 #include <QMap>
 #include <QPair>
 #include <QString>
@@ -19,10 +20,13 @@ class TranslatorUtil
 public:
     TranslatorUtil();
 
-    void addPairToMap(QMap<QString, QString> &map, const QPair<QString, QString> &pair);
-    void addItemToFromComboBox(QComboBox *combo, const QPair<QString, QString> &pair);
+    struct TranslatorSettings {
+        QString engine;
+        QString from;
+        QString to;
+    };
 
-    enum translatorType { GoogleTranslator = 0 };
+    void addItemToFromComboBox(QComboBox *combo, const QPair<QString, QString> &pair);
 
     enum languages {
         automatic,
@@ -86,9 +90,24 @@ public:
         ur,
         vi,
         cy,
-        yi
+        yi,
+        jv_yandex,
+        zn_yandex,
     };
-    QPair<QString, QString> pair(TranslatorUtil::languages lang);
+    Q_REQUIRED_RESULT static QVector<QPair<QString, QString>> genericLanguages();
+    Q_REQUIRED_RESULT static QVector<QPair<QString, QString>> googleSpecificLanguages();
+    Q_REQUIRED_RESULT static QVector<QPair<QString, QString>> yandexSpecificLanguages();
+    Q_REQUIRED_RESULT static QVector<QPair<QString, QString>> bingSpecificLanguages();
+
+    Q_REQUIRED_RESULT QPair<QString, QString> pair(TranslatorUtil::languages lang);
+    Q_REQUIRED_RESULT static PimCommon::TranslatorEngineBase *switchEngine(PimCommon::TranslatorEngineBase::TranslatorEngine engineType, QObject *parent);
+    static void fillComboboxSettings(QComboBox *combo);
+    Q_REQUIRED_RESULT static PimCommon::TranslatorEngineBase::TranslatorEngine loadEngineSettings();
+    Q_REQUIRED_RESULT static QString loadEngine();
+    static void saveEngineSettings(const QString &engineName);
+    Q_REQUIRED_RESULT static QString groupTranslateName();
+    Q_REQUIRED_RESULT static QString engineTranslateName();
+    Q_REQUIRED_RESULT static QString defaultEngineName();
+    Q_REQUIRED_RESULT static bool hasConfigureDialog(TranslatorEngineBase::TranslatorEngine engineType);
 };
 }
-

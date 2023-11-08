@@ -8,7 +8,7 @@
 
 #include <Libkdepim/ProgressManager> // ProgressItem
 
-#include <AgentInstance>
+#include <Akonadi/AgentInstance>
 namespace PimCommon
 {
 /**
@@ -37,4 +37,3 @@ private:
     QPointer<KPIM::ProgressItem> const mItem;
 };
 }
-

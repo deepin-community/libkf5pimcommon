@@ -1,13 +1,11 @@
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileCopyrightText: none
 ########### next target ###############
-set(testaddresseelineedit_SRCS testaddresseelineedit.cpp)
-
-add_executable(testaddresseelineedit ${testaddresseelineedit_SRCS})
+add_executable(testaddresseelineedit testaddresseelineedit.cpp)
 
 target_link_libraries(testaddresseelineedit KF5::PimCommonAkonadi KF5::I18n KF5::Completion)
 
 
 ########### next target ###############
-set(testcompletionconfiguredialog_SRCS completionconfiguredialog_gui.cpp)
-
-add_executable(completionconfiguredialog_gui ${testcompletionconfiguredialog_SRCS})
+add_executable(completionconfiguredialog_gui completionconfiguredialog_gui.cpp)
 target_link_libraries(completionconfiguredialog_gui KF5::PimCommonAkonadi KF5::I18n KF5::Completion)

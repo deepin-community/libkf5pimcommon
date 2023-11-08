@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -11,9 +11,7 @@ using namespace PimCommon;
 class PimCommon::GenericPluginInterfacePrivate
 {
 public:
-    GenericPluginInterfacePrivate()
-    {
-    }
+    GenericPluginInterfacePrivate() = default;
 
     QVector<ActionType> actionTypes;
 };
@@ -24,10 +22,7 @@ GenericPluginInterface::GenericPluginInterface(QObject *parent)
 {
 }
 
-GenericPluginInterface::~GenericPluginInterface()
-{
-    delete d;
-}
+GenericPluginInterface::~GenericPluginInterface() = default;
 
 void GenericPluginInterface::setActionTypes(const QVector<ActionType> &type)
 {
@@ -36,8 +31,9 @@ void GenericPluginInterface::setActionTypes(const QVector<ActionType> &type)
 
 void GenericPluginInterface::addActionType(ActionType type)
 {
-    // TODO check already existence ?
-    d->actionTypes.append(type);
+    if (!d->actionTypes.contains(type)) {
+        d->actionTypes.append(type);
+    }
 }
 
 QVector<ActionType> GenericPluginInterface::actionTypes() const
@@ -74,20 +70,4 @@ void GenericPluginInterface::setCollections(const Akonadi::Collection::List &col
 PimCommon::GenericPluginInterface::RequireTypes GenericPluginInterface::requiresFeatures() const
 {
     return None;
-}
-
-ActionType::ActionType(QAction *action, ActionType::Type type)
-    : mAction(action)
-    , mType(type)
-{
-}
-
-QAction *ActionType::action() const
-{
-    return mAction;
-}
-
-ActionType::Type ActionType::type() const
-{
-    return mType;
 }

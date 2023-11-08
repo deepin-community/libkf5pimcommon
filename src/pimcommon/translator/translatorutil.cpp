@@ -1,16 +1,119 @@
 /*
-  SPDX-FileCopyrightText: 2012-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2012-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 #include "translatorutil.h"
+#include "engine/bingtranslator.h"
+#include "engine/deepltranslator.h"
+#include "engine/googletranslator.h"
+#include "engine/libretranslatetranslator.h"
+#include "engine/lingvatranslator.h"
+#include "engine/yandextranslator.h"
+#include "pimcommon_debug.h"
+#include <KConfigGroup>
 #include <KLocalizedString>
+#include <KSharedConfig>
 #include <QComboBox>
 using namespace PimCommon;
 
-TranslatorUtil::TranslatorUtil()
+TranslatorUtil::TranslatorUtil() = default;
+
+QVector<QPair<QString, QString>> TranslatorUtil::bingSpecificLanguages()
 {
+    TranslatorUtil translatorUtil;
+    QVector<QPair<QString, QString>> langLanguage;
+#if 0
+    { QLatin1String("bs-BG"),  QLatin1String("bs-Latn")  },         //                                            NOTE: Bing translator only
+    { QLatin1String("sr-RS"),  QLatin1String("sr-Cyrl")  },         //                                            NOTE: Bing translator only
+    { QLatin1String("zh-CN"),  QLatin1String("zh-Hans")  },         // SimplifiedChinese                        ; NOTE: Bing translator only
+    { QLatin1String("zh-TW"),  QLatin1String("zh-Hant")  }          // TraditionalChinese                       ; NOTE: Bing translator only
+#endif
+    return langLanguage;
+}
+
+QVector<QPair<QString, QString>> TranslatorUtil::googleSpecificLanguages()
+{
+    TranslatorUtil translatorUtil;
+    QVector<QPair<QString, QString>> langLanguage;
+    langLanguage.append(translatorUtil.pair(TranslatorUtil::zh_cn_google)); // For google only
+    langLanguage.append(translatorUtil.pair(TranslatorUtil::zh_tw_google)); // For google only
+    return langLanguage;
+}
+
+QVector<QPair<QString, QString>> TranslatorUtil::yandexSpecificLanguages()
+{
+    TranslatorUtil translatorUtil;
+    QVector<QPair<QString, QString>> langLanguage;
+    langLanguage.append(translatorUtil.pair(TranslatorUtil::jv_yandex));
+    langLanguage.append(translatorUtil.pair(TranslatorUtil::zn_yandex));
+    return langLanguage;
+}
+
+QVector<QPair<QString, QString>> TranslatorUtil::genericLanguages()
+{
+    TranslatorUtil translatorUtil;
+    QVector<QPair<QString, QString>> fullListLanguage;
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::automatic));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::en));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::nl));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::fr));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::de));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::el));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::it));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::ja));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::ko));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::pt));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::ru));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::es));
+
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::af));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::sq));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::ar));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::hy));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::az));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::eu));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::be));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::bg));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::ca));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::hr));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::cs));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::da));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::et));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::tl));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::fi));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::gl));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::ka));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::ht));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::iw));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::hi));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::hu));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::is));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::id));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::ga));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::lv));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::lt));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::mk));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::ms));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::mt));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::no));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::fa));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::pl));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::ro));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::sr));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::sk));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::sl));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::sw));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::sv));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::th));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::tr));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::uk));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::ur));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::vi));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::cy));
+    fullListLanguage.append(translatorUtil.pair(TranslatorUtil::yi));
+    return fullListLanguage;
 }
 
 QPair<QString, QString> TranslatorUtil::pair(TranslatorUtil::languages lang)
@@ -204,12 +307,130 @@ QPair<QString, QString> TranslatorUtil::pair(TranslatorUtil::languages lang)
     return ret;
 }
 
-void PimCommon::TranslatorUtil::addPairToMap(QMap<QString, QString> &map, const QPair<QString, QString> &pair)
-{
-    map.insert(pair.first, pair.second);
-}
-
-void PimCommon::TranslatorUtil::addItemToFromComboBox(QComboBox *combo, const QPair<QString, QString> &pair)
+void TranslatorUtil::addItemToFromComboBox(QComboBox *combo, const QPair<QString, QString> &pair)
 {
     combo->addItem(pair.first, pair.second);
+}
+
+PimCommon::TranslatorEngineBase *TranslatorUtil::switchEngine(PimCommon::TranslatorEngineBase::TranslatorEngine engineType, QObject *parent)
+{
+    PimCommon::TranslatorEngineBase *abstractTranslator = nullptr;
+    switch (engineType) {
+    case PimCommon::TranslatorEngineBase::TranslatorEngine::Google:
+        abstractTranslator = new GoogleTranslator(parent);
+        break;
+    case PimCommon::TranslatorEngineBase::TranslatorEngine::Yandex:
+        abstractTranslator = new YandexTranslator(parent);
+        break;
+    case PimCommon::TranslatorEngineBase::TranslatorEngine::Bing:
+        abstractTranslator = new BingTranslator(parent);
+        break;
+    case PimCommon::TranslatorEngineBase::TranslatorEngine::Lingva:
+        abstractTranslator = new LingvaTranslator(parent);
+        break;
+    case PimCommon::TranslatorEngineBase::TranslatorEngine::LibreTranslate:
+        abstractTranslator = new LibreTranslateTranslator(parent);
+        break;
+    case PimCommon::TranslatorEngineBase::TranslatorEngine::DeepL:
+        abstractTranslator = new DeepLTranslator(parent);
+        break;
+    }
+    abstractTranslator->loadSettings();
+    return abstractTranslator;
+}
+
+void TranslatorUtil::fillComboboxSettings(QComboBox *combo)
+{
+    for (int i = 0; i <= PimCommon::TranslatorEngineBase::TranslatorEngine::LastEngine; ++i) {
+        switch (i) {
+        case PimCommon::TranslatorEngineBase::TranslatorEngine::Google:
+            combo->addItem(i18n("Google"), QStringLiteral("google"));
+            break;
+        case PimCommon::TranslatorEngineBase::TranslatorEngine::Yandex:
+            combo->addItem(i18n("Yandex"), QStringLiteral("yandex"));
+            break;
+        case PimCommon::TranslatorEngineBase::TranslatorEngine::Bing:
+            combo->addItem(i18n("Bing"), QStringLiteral("bing"));
+            break;
+        case PimCommon::TranslatorEngineBase::TranslatorEngine::Lingva:
+            combo->addItem(i18n("Lingva"), QStringLiteral("lingva"));
+            break;
+        case PimCommon::TranslatorEngineBase::TranslatorEngine::LibreTranslate:
+            combo->addItem(i18n("Libre Translate"), QStringLiteral("libretranslate"));
+            break;
+        case PimCommon::TranslatorEngineBase::TranslatorEngine::DeepL:
+            combo->addItem(i18n("DeepL"), QStringLiteral("deepl"));
+            break;
+        default:
+            qCWarning(PIMCOMMON_LOG) << " Missing engine. It's a bug " << i;
+            break;
+        }
+    }
+}
+
+QString TranslatorUtil::groupTranslateName()
+{
+    return QStringLiteral("Translate");
+}
+
+QString TranslatorUtil::engineTranslateName()
+{
+    return QStringLiteral("engine");
+}
+
+QString TranslatorUtil::defaultEngineName()
+{
+    return QStringLiteral("google");
+}
+
+QString TranslatorUtil::loadEngine()
+{
+    KConfigGroup myGeneralGroup(KSharedConfig::openConfig(), groupTranslateName());
+    const QString engineTypeStr = myGeneralGroup.readEntry(engineTranslateName(), defaultEngineName()); // Default google
+    return engineTypeStr;
+}
+
+PimCommon::TranslatorEngineBase::TranslatorEngine TranslatorUtil::loadEngineSettings()
+{
+    PimCommon::TranslatorEngineBase::TranslatorEngine engineType = PimCommon::TranslatorEngineBase::TranslatorEngine::Google;
+    const QString engineTypeStr = TranslatorUtil::loadEngine();
+    if (engineTypeStr == QLatin1String("google")) {
+        engineType = PimCommon::TranslatorEngineBase::TranslatorEngine::Google;
+    } else if (engineTypeStr == QLatin1String("bing")) {
+        engineType = PimCommon::TranslatorEngineBase::TranslatorEngine::Bing;
+    } else if (engineTypeStr == QLatin1String("yandex")) {
+        engineType = PimCommon::TranslatorEngineBase::TranslatorEngine::Yandex;
+    } else if (engineTypeStr == QLatin1String("libretranslate")) {
+        engineType = PimCommon::TranslatorEngineBase::TranslatorEngine::LibreTranslate;
+    } else if (engineTypeStr == QLatin1String("deepl")) {
+        engineType = PimCommon::TranslatorEngineBase::TranslatorEngine::DeepL;
+    } else if (engineTypeStr == QLatin1String("lingva")) {
+        engineType = PimCommon::TranslatorEngineBase::TranslatorEngine::Lingva;
+    } else {
+        qCWarning(PIMCOMMON_LOG) << "Invalid translator engine " << engineTypeStr;
+        engineType = PimCommon::TranslatorEngineBase::TranslatorEngine::Google;
+    }
+    return engineType;
+}
+
+void TranslatorUtil::saveEngineSettings(const QString &engineName)
+{
+    KConfigGroup myGroup(KSharedConfig::openConfig(), groupTranslateName());
+    myGroup.writeEntry(engineTranslateName(), engineName);
+    myGroup.sync();
+}
+
+bool TranslatorUtil::hasConfigureDialog(TranslatorEngineBase::TranslatorEngine engineType)
+{
+    switch (engineType) {
+    case TranslatorEngineBase::TranslatorEngine::Google:
+    case TranslatorEngineBase::TranslatorEngine::Yandex:
+    case TranslatorEngineBase::TranslatorEngine::Bing:
+        return false;
+    case TranslatorEngineBase::TranslatorEngine::Lingva:
+    case TranslatorEngineBase::TranslatorEngine::LibreTranslate:
+    case TranslatorEngineBase::TranslatorEngine::DeepL:
+        return true;
+    }
+    return false;
 }

@@ -27,6 +27,7 @@
 #include <QLabel>
 #include <QMenu>
 #include <QPair>
+#include <QPointer>
 #include <QPushButton>
 #include <QSortFilterProxyModel>
 #include <QTableView>
@@ -36,6 +37,7 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <KMessageBox>
+#include <KPluginMetaData>
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QLineEdit>
@@ -52,7 +54,7 @@ using namespace PimCommon;
 static QString asUtf8(const QByteArray &val)
 {
     if (val.isEmpty()) {
-        return QString();
+        return {};
     }
 
     const char *data = val.data();
@@ -68,14 +70,14 @@ static QString asUtf8(const QByteArray &val)
 static QString join(const KLDAP::LdapAttrValue &lst, const QString &sep)
 {
     QString res;
-    bool alredy = false;
+    bool already = false;
     KLDAP::LdapAttrValue::ConstIterator end(lst.constEnd());
     for (KLDAP::LdapAttrValue::ConstIterator it = lst.constBegin(); it != end; ++it) {
-        if (alredy) {
+        if (already) {
             res += sep;
         }
 
-        alredy = true;
+        already = true;
         res += asUtf8(*it);
     }
 
@@ -160,7 +162,9 @@ static KContacts::Addressee convertLdapAttributesToAddressee(const KLDAP::LdapAt
     KLDAP::LdapAttrValue::ConstIterator it = lst.constBegin();
     bool pref = true;
     while (it != lst.constEnd()) {
-        addr.insertEmail(asUtf8(*it), pref);
+        KContacts::Email email(asUtf8(*it));
+        email.setPreferred(pref);
+        addr.addEmail(email);
         pref = false;
         ++it;
     }
@@ -235,7 +239,7 @@ public:
         endResetModel();
     }
 
-    QPair<KLDAP::LdapAttrMap, QString> contact(const QModelIndex &index) const
+    Q_REQUIRED_RESULT QPair<KLDAP::LdapAttrMap, QString> contact(const QModelIndex &index) const
     {
         if (!index.isValid() || index.row() < 0 || index.row() >= mContactList.count()) {
             return qMakePair(KLDAP::LdapAttrMap(), QString());
@@ -244,19 +248,19 @@ public:
         return qMakePair(mContactList.at(index.row()), mServerList.at(index.row()));
     }
 
-    QString email(const QModelIndex &index) const
+    Q_REQUIRED_RESULT QString email(const QModelIndex &index) const
     {
         if (!index.isValid() || index.row() < 0 || index.row() >= mContactList.count()) {
-            return QString();
+            return {};
         }
 
         return asUtf8(mContactList.at(index.row()).value(QStringLiteral("mail")).first()).trimmed();
     }
 
-    QString fullName(const QModelIndex &index) const
+    Q_REQUIRED_RESULT QString fullName(const QModelIndex &index) const
     {
         if (!index.isValid() || index.row() < 0 || index.row() >= mContactList.count()) {
-            return QString();
+            return {};
         }
 
         return asUtf8(mContactList.at(index.row()).value(QStringLiteral("cn")).first()).trimmed();
@@ -270,7 +274,7 @@ public:
         endResetModel();
     }
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override
+    Q_REQUIRED_RESULT int rowCount(const QModelIndex &parent = QModelIndex()) const override
     {
         if (!parent.isValid()) {
             return mContactList.count();
@@ -279,7 +283,7 @@ public:
         }
     }
 
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override
+    Q_REQUIRED_RESULT int columnCount(const QModelIndex &parent = QModelIndex()) const override
     {
         if (!parent.isValid()) {
             return 18;
@@ -288,10 +292,10 @@ public:
         }
     }
 
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override
+    Q_REQUIRED_RESULT QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override
     {
         if (orientation == Qt::Vertical || role != Qt::DisplayRole || section < 0 || section > 17) {
-            return QVariant();
+            return {};
         }
 
         switch (section) {
@@ -332,18 +336,18 @@ public:
         case 17:
             return i18nc("@title:column Column containing title of the person", "Title");
         default:
-            return QVariant();
+            return {};
         }
     }
 
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
+    Q_REQUIRED_RESULT QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
     {
         if (!index.isValid()) {
-            return QVariant();
+            return {};
         }
 
         if (index.row() < 0 || index.row() >= mContactList.count() || index.column() < 0 || index.column() > 17) {
-            return QVariant();
+            return {};
         }
 
         if (role == ServerRole) {
@@ -351,7 +355,7 @@ public:
         }
 
         if ((role != Qt::DisplayRole) && (role != Qt::ToolTipRole)) {
-            return QVariant();
+            return {};
         }
 
         const KLDAP::LdapAttrMap map = mContactList.at(index.row());
@@ -394,7 +398,7 @@ public:
         case 17:
             return join(map.value(QStringLiteral("title")), QStringLiteral(", "));
         default:
-            return QVariant();
+            return {};
         }
     }
 
@@ -403,10 +407,10 @@ private:
     QStringList mServerList;
 };
 
-class Q_DECL_HIDDEN LdapSearchDialog::Private
+class Q_DECL_HIDDEN LdapSearchDialog::LdapSearchDialogPrivate
 {
 public:
-    Private(LdapSearchDialog *qq)
+    LdapSearchDialogPrivate(LdapSearchDialog *qq)
         : q(qq)
     {
     }
@@ -463,7 +467,7 @@ public:
 
 LdapSearchDialog::LdapSearchDialog(QWidget *parent)
     : QDialog(parent)
-    , d(new Private(this))
+    , d(new LdapSearchDialogPrivate(this))
 {
     setWindowTitle(i18nc("@title:window", "Import Contacts from LDAP"));
     auto mainLayout = new QVBoxLayout(this);
@@ -486,7 +490,7 @@ LdapSearchDialog::LdapSearchDialog(QWidget *parent)
     mainLayout->addWidget(buttonBox);
 
     auto topLayout = new QVBoxLayout(page);
-    topLayout->setContentsMargins(0, 0, 0, 0);
+    topLayout->setContentsMargins({});
 
     auto groupBox = new QGroupBox(i18n("Search for Addresses in Directory"), page);
     auto boxLayout = new QGridLayout();
@@ -561,7 +565,7 @@ LdapSearchDialog::LdapSearchDialog(QWidget *parent)
     d->mResultView->verticalHeader()->hide();
     d->mResultView->setSortingEnabled(true);
     d->mResultView->horizontalHeader()->setSortIndicatorShown(true);
-    connect(d->mResultView, qOverload<const QModelIndex &>(&QTableView::clicked), this, [this]() {
+    connect(d->mResultView, &QTableView::clicked, this, [this]() {
         d->slotSelectionChanged();
     });
     topLayout->addWidget(d->mResultView);
@@ -570,7 +574,7 @@ LdapSearchDialog::LdapSearchDialog(QWidget *parent)
     connect(d->mResultView, &QTableView::customContextMenuRequested, this, &LdapSearchDialog::slotCustomContextMenuRequested);
 
     auto buttonLayout = new QHBoxLayout;
-    buttonLayout->setContentsMargins(0, 0, 0, 0);
+    buttonLayout->setContentsMargins({});
     topLayout->addLayout(buttonLayout);
 
     d->progressIndication = new KPIM::ProgressIndicatorLabel(i18n("Searching..."));
@@ -607,7 +611,6 @@ LdapSearchDialog::LdapSearchDialog(QWidget *parent)
 LdapSearchDialog::~LdapSearchDialog()
 {
     d->saveSettings();
-    delete d;
 }
 
 void LdapSearchDialog::setSearchText(const QString &text)
@@ -633,12 +636,12 @@ void LdapSearchDialog::slotCustomContextMenuRequested(const QPoint &pos)
     }
 }
 
-void LdapSearchDialog::Private::slotSelectionChanged()
+void LdapSearchDialog::LdapSearchDialogPrivate::slotSelectionChanged()
 {
     user1Button->setEnabled(mResultView->selectionModel()->hasSelection());
 }
 
-void LdapSearchDialog::Private::restoreSettings()
+void LdapSearchDialog::LdapSearchDialogPrivate::restoreSettings()
 {
     // Create one KLDAP::LdapClient per selected server and configure it.
 
@@ -678,7 +681,9 @@ void LdapSearchDialog::Private::restoreSettings()
 
             ldapClient->setAttributes(attrs);
 
-            q->connect(ldapClient, SIGNAL(result(KLDAP::LdapClient, KLDAP::LdapObject)), q, SLOT(slotAddResult(KLDAP::LdapClient, KLDAP::LdapObject)));
+            // clang-format off
+            q->connect(ldapClient, SIGNAL(result(KLDAP::LdapClient,KLDAP::LdapObject)), q, SLOT(slotAddResult(KLDAP::LdapClient,KLDAP::LdapObject)));
+            // clang-format on
             q->connect(ldapClient, SIGNAL(done()), q, SLOT(slotSearchDone()));
             q->connect(ldapClient, &KLDAP::LdapClient::error, q, [this](const QString &err) {
                 slotError(err);
@@ -702,7 +707,7 @@ void LdapSearchDialog::Private::restoreSettings()
     }
 }
 
-void LdapSearchDialog::Private::saveSettings()
+void LdapSearchDialog::LdapSearchDialogPrivate::saveSettings()
 {
     KConfig *config = KLDAP::LdapClientSearchConfig::config();
     KConfigGroup group(config, "LDAPSearch");
@@ -719,19 +724,19 @@ void LdapSearchDialog::Private::saveSettings()
     group.sync();
 }
 
-void LdapSearchDialog::Private::cancelQuery()
+void LdapSearchDialog::LdapSearchDialogPrivate::cancelQuery()
 {
     for (KLDAP::LdapClient *client : std::as_const(mLdapClientList)) {
         client->cancelQuery();
     }
 }
 
-void LdapSearchDialog::Private::slotAddResult(const KLDAP::LdapClient &client, const KLDAP::LdapObject &obj)
+void LdapSearchDialog::LdapSearchDialogPrivate::slotAddResult(const KLDAP::LdapClient &client, const KLDAP::LdapObject &obj)
 {
     mModel->addContact(obj.attributes(), client.server().host());
 }
 
-void LdapSearchDialog::Private::slotSetScope(bool rec)
+void LdapSearchDialog::LdapSearchDialogPrivate::slotSetScope(bool rec)
 {
     for (KLDAP::LdapClient *client : std::as_const(mLdapClientList)) {
         if (rec) {
@@ -742,7 +747,7 @@ void LdapSearchDialog::Private::slotSetScope(bool rec)
     }
 }
 
-void LdapSearchDialog::Private::slotStartSearch()
+void LdapSearchDialog::LdapSearchDialogPrivate::slotStartSearch()
 {
     cancelQuery();
 
@@ -774,13 +779,13 @@ void LdapSearchDialog::Private::slotStartSearch()
     saveSettings();
 }
 
-void LdapSearchDialog::Private::slotStopSearch()
+void LdapSearchDialog::LdapSearchDialogPrivate::slotStopSearch()
 {
     cancelQuery();
     slotSearchDone();
 }
 
-void LdapSearchDialog::Private::slotSearchDone()
+void LdapSearchDialog::LdapSearchDialogPrivate::slotSearchDone()
 {
     // If there are no more active clients, we are done.
     for (KLDAP::LdapClient *client : std::as_const(mLdapClientList)) {
@@ -799,7 +804,7 @@ void LdapSearchDialog::Private::slotSearchDone()
 #endif
 }
 
-void LdapSearchDialog::Private::slotError(const QString &error)
+void LdapSearchDialog::LdapSearchDialogPrivate::slotError(const QString &error)
 {
 #ifndef QT_NO_CURSOR
     QApplication::restoreOverrideCursor();
@@ -813,13 +818,13 @@ void LdapSearchDialog::closeEvent(QCloseEvent *e)
     e->accept();
 }
 
-void LdapSearchDialog::Private::slotUnselectAll()
+void LdapSearchDialog::LdapSearchDialogPrivate::slotUnselectAll()
 {
     mResultView->clearSelection();
     slotSelectionChanged();
 }
 
-void LdapSearchDialog::Private::slotSelectAll()
+void LdapSearchDialog::LdapSearchDialogPrivate::slotSelectAll()
 {
     mResultView->selectAll();
     slotSelectionChanged();
@@ -861,7 +866,7 @@ void LdapSearchDialog::slotUser2()
 
     QPointer<KCMultiDialog> dialog = new KCMultiDialog(this);
     dialog->setWindowTitle(i18nc("@title:window", "Configure the Address Book LDAP Settings"));
-    dialog->addModule(QStringLiteral("kcmldap.desktop"));
+    dialog->addModule(KPluginMetaData(QStringLiteral("pim" QT_STRINGIFY(QT_VERSION_MAJOR)) + QStringLiteral("/kcms/kaddressbook/kcm_ldap")));
 
     if (dialog->exec()) { // krazy:exclude=crashy
         d->restoreSettings();

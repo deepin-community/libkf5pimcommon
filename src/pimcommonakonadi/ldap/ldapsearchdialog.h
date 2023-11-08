@@ -10,8 +10,8 @@
 
 #include "pimcommonakonadi_export.h"
 
+#include <KContacts/Addressee>
 #include <QDialog>
-#include <kcontacts/addressee.h>
 
 class QCloseEvent;
 
@@ -36,7 +36,12 @@ class PIMCOMMONAKONADI_EXPORT LdapSearchDialog : public QDialog
     Q_OBJECT
 
 public:
-    enum FilterType { Name = 0, Email, HomeNumber, WorkNumber };
+    enum FilterType {
+        Name = 0,
+        Email,
+        HomeNumber,
+        WorkNumber,
+    };
 
     /**
      * Creates a new ldap search dialog.
@@ -79,8 +84,8 @@ protected:
 
 private:
     //@cond PRIVATE
-    class Private;
-    Private *const d;
+    class LdapSearchDialogPrivate;
+    std::unique_ptr<LdapSearchDialogPrivate> const d;
 
     Q_PRIVATE_SLOT(d, void slotAddResult(const KLDAP::LdapClient &, const KLDAP::LdapObject &))
     Q_PRIVATE_SLOT(d, void slotStartSearch())

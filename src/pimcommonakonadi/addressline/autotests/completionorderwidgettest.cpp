@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
@@ -16,9 +16,7 @@ CompletionOrderWidgetTest::CompletionOrderWidgetTest(QObject *parent)
 {
 }
 
-CompletionOrderWidgetTest::~CompletionOrderWidgetTest()
-{
-}
+CompletionOrderWidgetTest::~CompletionOrderWidgetTest() = default;
 
 void CompletionOrderWidgetTest::shouldHaveDefaultValue()
 {

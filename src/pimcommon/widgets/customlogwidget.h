@@ -1,5 +1,5 @@
 /*
-   SPDX-FileCopyrightText: 2012-2021 Laurent Montel <montel@kde.org>
+   SPDX-FileCopyrightText: 2012-2022 Laurent Montel <montel@kde.org>
 
    SPDX-License-Identifier: LGPL-2.0-or-later
 */
@@ -32,7 +32,7 @@ class PIMCOMMON_EXPORT CustomLogWidget : public QListWidget
 {
 public:
     explicit CustomLogWidget(QWidget *parent = nullptr);
-    ~CustomLogWidget();
+    ~CustomLogWidget() override;
 
     void addInfoLogEntry(const QString &log);
     void addErrorLogEntry(const QString &log);
@@ -44,9 +44,15 @@ public:
     Q_REQUIRED_RESULT bool isEmpty() const;
 
 private:
-    enum ItemType { ItemLogType = Qt::UserRole + 1 };
+    enum ItemType {
+        ItemLogType = Qt::UserRole + 1,
+    };
 
-    enum LogType { Title = 0, Error, Info, EndLine };
+    enum LogType {
+        Title = 0,
+        Error,
+        Info,
+        EndLine,
+    };
 };
 }
-

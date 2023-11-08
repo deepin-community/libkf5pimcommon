@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -38,10 +38,7 @@ TemplateManager::TemplateManager(const QString &relativeTemplateDir, PimCommon::
     loadTemplates(true);
 }
 
-TemplateManager::~TemplateManager()
-{
-    delete d;
-}
+TemplateManager::~TemplateManager() = default;
 
 void TemplateManager::slotDirectoryChanged()
 {

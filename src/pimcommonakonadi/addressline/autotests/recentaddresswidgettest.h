@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
@@ -14,7 +14,7 @@ class RecentAddressWidgetTest : public QObject
     Q_OBJECT
 public:
     explicit RecentAddressWidgetTest(QObject *parent = nullptr);
-    ~RecentAddressWidgetTest();
+    ~RecentAddressWidgetTest() override;
 private Q_SLOTS:
     void shouldHaveDefaultValue();
     void shouldAddAddresses();
@@ -23,4 +23,3 @@ private Q_SLOTS:
     void shouldNotAddEmptyLine();
     void shouldDisableAddButton();
 };
-

@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2016-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2016-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -13,6 +13,7 @@
 #include <QTreeWidgetItem>
 class QTreeWidget;
 class QAction;
+class KTreeWidgetSearchLineWidget;
 namespace PimCommon
 {
 /**
@@ -45,19 +46,16 @@ protected:
     class PluginItem : public QTreeWidgetItem
     {
     public:
-        PluginItem(QTreeWidgetItem *parent)
+        explicit PluginItem(QTreeWidgetItem *parent)
             : QTreeWidgetItem(parent)
-            , mEnableByDefault(false)
-            , mHasConfigureSupport(false)
-            , mEnableFromUserSettings(false)
         {
         }
 
         QString mIdentifier;
         QString mDescription;
-        bool mEnableByDefault;
-        bool mHasConfigureSupport;
-        bool mEnableFromUserSettings;
+        bool mEnableByDefault = false;
+        bool mHasConfigureSupport = false;
+        bool mEnableFromUserSettings = false;
     };
     void savePlugins(const QString &groupName, const QString &prefixSettingKey, const QVector<PluginItem *> &listItems);
     void fillTopItems(const QVector<PimCommon::PluginUtilData> &lst,
@@ -70,11 +68,11 @@ protected:
     void resetToUserSettings(const QVector<PluginItem *> &items);
     void changeState(const QVector<PluginItem *> &items);
 
-    QTreeWidget *mListWidget = nullptr;
+    QTreeWidget *const mListWidget;
 
 private:
+    KTreeWidgetSearchLineWidget *mTreeWidgetSearchLineEdit = nullptr;
     void slotConfigureClicked(QAction *act);
     bool mInitializeDone = false;
 };
 }
-

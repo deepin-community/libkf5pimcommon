@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2011-2021 Laurent Montel <montel@kde.org>
+ * SPDX-FileCopyrightText: 2011-2022 Laurent Montel <montel@kde.org>
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
@@ -8,10 +8,10 @@
 #include <KJobWidgets>
 #include <KLocalizedString>
 #include <KMessageBox>
+#include <KSeparator>
 #include <KStandardGuiItem>
 #include <QLineEdit>
 #include <QPushButton>
-#include <kseparator.h>
 
 #include <QCheckBox>
 #include <QFileInfo>
@@ -42,7 +42,8 @@ public:
 
 QString PimCommon::RenameFileDialog::RenameFileDialogPrivate::suggestName(const QUrl &baseURL, const QString &oldName)
 {
-    QString dotSuffix, suggestedName;
+    QString dotSuffix;
+    QString suggestedName;
     QString basename = oldName;
     const QChar spacer(QLatin1Char(' '));
 
@@ -140,10 +141,7 @@ RenameFileDialog::RenameFileDialog(const QUrl &url, bool multiFiles, QWidget *pa
     layout->addWidget(ignore);
 }
 
-RenameFileDialog::~RenameFileDialog()
-{
-    delete d;
-}
+RenameFileDialog::~RenameFileDialog() = default;
 
 void RenameFileDialog::slotOverwritePressed()
 {

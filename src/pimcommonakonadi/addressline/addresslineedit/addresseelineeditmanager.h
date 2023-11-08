@@ -1,16 +1,16 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 #pragma once
 
-#include <AkonadiCore/Collection>
+#include <Akonadi/Collection>
 #include <QMap>
 
-#include <AkonadiCore/Item>
-#include <AkonadiCore/Session>
+#include <Akonadi/Item>
+#include <Akonadi/Session>
 #include <KLDAP/LdapClientSearch>
 #include <QPointer>
 #include <QVector>
@@ -49,7 +49,7 @@ public:
     QStringList completionSources;
 
     // The weights associated with the completion sources in s_static->completionSources.
-    // Both are maintained by addCompletionSource(), don't attempt to modifiy those yourself.
+    // Both are maintained by addCompletionSource(), don't attempt to modify those yourself.
     QMap<QString, int> completionSourceWeights;
 
     // holds the cached mapping from akonadi collection id to the completion source index
@@ -124,6 +124,8 @@ private:
     AddresseeLineEditAkonadi *const mAddresseeLineEditAkonadi;
     AddresseeLineEditLdap *const mAddressessLineEditLdap;
     AddresseeLineEditBaloo *const mAddressessLineEditBaloo;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QNetworkConfigurationManager *const mNetworkConfigMgr;
+#endif
 };
 }

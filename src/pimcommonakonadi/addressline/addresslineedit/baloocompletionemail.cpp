@@ -1,20 +1,17 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
 */
 
 #include "baloocompletionemail.h"
-#include "pimcommonakonadi_debug.h"
 #include <KEmailAddress>
 #include <QMap>
 
 using namespace PimCommon;
 
-BalooCompletionEmail::BalooCompletionEmail()
-{
-}
+BalooCompletionEmail::BalooCompletionEmail() = default;
 
 void BalooCompletionEmail::setEmailList(const QStringList &lst)
 {
@@ -73,7 +70,9 @@ QStringList BalooCompletionEmail::cleanupEmailList()
  */
 QString BalooCompletionEmail::stripEmail(const QString &email, QString &address)
 {
-    QString displayName, addrSpec, comment;
+    QString displayName;
+    QString addrSpec;
+    QString comment;
     if (KEmailAddress::AddressOk == KEmailAddress::splitAddress(email, displayName, addrSpec, comment)) {
         address = addrSpec;
         while (true) {

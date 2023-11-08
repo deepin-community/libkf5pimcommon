@@ -4,7 +4,7 @@
     This file is part of KMail, the KDE mail client.
     SPDX-FileCopyrightText: 2001 Marc Mutz <mutz@kde.org>
 
-    SPDX-FileCopyrightText: 2013-2021 Laurent Montel <montel@kde.org>
+    SPDX-FileCopyrightText: 2013-2022 Laurent Montel <montel@kde.org>
 
     SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -21,6 +21,7 @@
 #include <QMenu>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <kwidgetsaddons_version.h>
 
 //********************************************************
 // SimpleStringListEditor
@@ -30,11 +31,9 @@ using namespace PimCommon;
 class PimCommon::SimpleStringListEditorPrivate
 {
 public:
-    SimpleStringListEditorPrivate()
-    {
-    }
+    SimpleStringListEditorPrivate() = default;
 
-    QList<QListWidgetItem *> selectedItems() const
+    Q_REQUIRED_RESULT QList<QListWidgetItem *> selectedItems() const
     {
         QList<QListWidgetItem *> listWidgetItem;
         const int numberOfFilters = mListBox->count();
@@ -73,7 +72,7 @@ SimpleStringListEditor::SimpleStringListEditor(QWidget *parent,
     setAddDialogLabel(addDialogLabel);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     auto hlay = new QHBoxLayout(this);
-    hlay->setContentsMargins(0, 0, 0, 0);
+    hlay->setContentsMargins({});
 
     d->mListBox = new QListWidget(this);
 
@@ -167,10 +166,7 @@ SimpleStringListEditor::SimpleStringListEditor(QWidget *parent,
     connect(d->mListBox, &QListWidget::itemSelectionChanged, this, &SimpleStringListEditor::slotSelectionChanged);
 }
 
-SimpleStringListEditor::~SimpleStringListEditor()
-{
-    delete d;
-}
+SimpleStringListEditor::~SimpleStringListEditor() = default;
 
 void SimpleStringListEditor::setUpDownAutoRepeat(bool b)
 {
@@ -310,7 +306,16 @@ void SimpleStringListEditor::slotRemove()
     if (selectedItems.isEmpty()) {
         return;
     }
-    if (KMessageBox::Yes == KMessageBox::warningYesNo(this, d->mRemoveDialogLabel, i18n("Remove"))) {
+#if KWIDGETSADDONS_VERSION >= QT_VERSION_CHECK(5, 100, 0)
+    const int answer = KMessageBox::warningTwoActions(this, d->mRemoveDialogLabel, i18n("Remove"), KStandardGuiItem::remove(), KStandardGuiItem::cancel());
+#else
+    const int answer = KMessageBox::warningYesNo(this, d->mRemoveDialogLabel, i18n("Remove"), KStandardGuiItem::remove(), KStandardGuiItem::cancel());
+#endif
+#if KWIDGETSADDONS_VERSION >= QT_VERSION_CHECK(5, 100, 0)
+    if (answer == KMessageBox::ButtonCode::PrimaryAction) {
+#else
+    if (answer == KMessageBox::Yes) {
+#endif
         for (QListWidgetItem *item : selectedItems) {
             delete d->mListBox->takeItem(d->mListBox->row(item));
         }
@@ -326,7 +331,7 @@ QString SimpleStringListEditor::modifyEntry(const QString &text)
     Q_EMIT aboutToAdd(newText);
 
     if (!ok || newText.trimmed().isEmpty() || newText == text) {
-        return QString();
+        return {};
     }
 
     return newText;

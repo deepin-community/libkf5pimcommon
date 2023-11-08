@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2011-2021 Laurent Montel <montel@kde.org>
+ * SPDX-FileCopyrightText: 2011-2022 Laurent Montel <montel@kde.org>
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
@@ -23,7 +23,7 @@ class PIMCOMMON_EXPORT RenameFileDialog : public QDialog
     Q_OBJECT
 public:
     explicit RenameFileDialog(const QUrl &url, bool multiFiles, QWidget *parent);
-    ~RenameFileDialog();
+    ~RenameFileDialog() override;
 
     enum RenameFileDialogResult {
         RENAMEFILE_IGNORE = 0,
@@ -43,7 +43,6 @@ private:
     void slotSuggestNewNamePressed();
     //@cond PRIVATE
     class RenameFileDialogPrivate;
-    RenameFileDialogPrivate *const d;
+    std::unique_ptr<RenameFileDialogPrivate> const d;
 };
 }
-

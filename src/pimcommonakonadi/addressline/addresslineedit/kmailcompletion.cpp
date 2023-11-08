@@ -2,13 +2,13 @@
   This file is part of libkdepim.
 
   SPDX-FileCopyrightText: 2006 Christian Schaarschmidt <schaarsc@gmx.de>
-  SPDX-FileCopyrightText: 2017-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2017-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
 #include "kmailcompletion.h"
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QSet>
 
 using namespace PimCommon;
@@ -31,7 +31,7 @@ QString KMailCompletion::makeCompletion(const QString &string)
     // this should be in postProcessMatch, but postProcessMatch is const and will not allow nextMatch
     if (!match.isEmpty()) {
         const QString firstMatch(match);
-        while (match.indexOf(QRegExp(QLatin1String("(@)|(<.*>)"))) == -1) {
+        while (match.indexOf(QRegularExpression(QStringLiteral("(@)|(<.*>)"))) == -1) {
             /* local email do not require @domain part, if match is an address we'll
              * find last+first <match> in m_keyMap and we'll know that match is
              * already a valid email.
@@ -85,10 +85,14 @@ void KMailCompletion::postProcessMatches(QStringList *pMatches) const
 
     // KCompletion has found the keywords for us, we can now map them to mail-addr
     QSet<QString> mailAddrDistinct;
-    for (QStringList::ConstIterator sit(pMatches->begin()), sEnd(pMatches->end()); sit != sEnd; ++sit) {
-        const QStringList &mailAddr = m_keyMap[(*sit)]; // get all mailAddr for this keyword
-        for (QStringList::ConstIterator sit(mailAddr.begin()), sEnd(mailAddr.end()); sit != sEnd; ++sit) {
-            mailAddrDistinct.insert(*sit); // store mailAddr, QSet will make them unique
+    for (QStringList::ConstIterator sit2(pMatches->begin()), sEnd2(pMatches->end()); sit2 != sEnd2; ++sit2) {
+        const QStringList &mailAddr = m_keyMap[(*sit2)]; // get all mailAddr for this keyword
+        if (mailAddr.isEmpty()) {
+            mailAddrDistinct.insert(*sit2);
+        } else {
+            for (QStringList::ConstIterator sit(mailAddr.begin()), sEnd(mailAddr.end()); sit != sEnd; ++sit) {
+                mailAddrDistinct.insert(*sit); // store mailAddr, QSet will make them unique
+            }
         }
     }
     pMatches->clear(); // delete keywords

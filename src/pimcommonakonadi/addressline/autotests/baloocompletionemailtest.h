@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
@@ -14,7 +14,7 @@ class BalooCompletionEmailTest : public QObject
     Q_OBJECT
 public:
     explicit BalooCompletionEmailTest(QObject *parent = nullptr);
-    ~BalooCompletionEmailTest();
+    ~BalooCompletionEmailTest() override;
 
 private Q_SLOTS:
     void returnEmptyListWhenEmailListIsEmpty();
@@ -30,4 +30,3 @@ private Q_SLOTS:
     void shouldExcludeDuplicateEntryWithDifferentDisplayNameAddAddressWithDifferentCase();
     void shouldExcludeEmptyNameWithDisplayNameForSameAddress();
 };
-

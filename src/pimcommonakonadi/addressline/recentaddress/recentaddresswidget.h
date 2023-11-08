@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: LGPL-2.0-or-later
 
@@ -40,10 +40,10 @@ private:
     void slotAddItem();
     void slotRemoveItem();
     void slotUpdateAddButton(const QString &str);
-    QToolButton *mNewButton = nullptr;
-    QToolButton *mRemoveButton = nullptr;
-    QListWidget *mListView = nullptr;
-    QLineEdit *mLineEdit = nullptr;
+    QLineEdit *const mLineEdit;
+    QToolButton *const mNewButton;
+    QToolButton *const mRemoveButton;
+    QListWidget *const mListView;
     bool mDirty = false;
 };
 }

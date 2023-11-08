@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2015-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2015-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -68,7 +68,7 @@ QIcon ShareServiceUrlManagerPrivate::typeToIcon(ShareServiceUrlManager::ServiceT
     case ShareServiceUrlManager::LiveJournal:
         break;
     case ShareServiceUrlManager::ServiceEndType:
-        qCWarning(PIMCOMMON_LOG) << "icon for unknow type requested. It's a bug.";
+        qCWarning(PIMCOMMON_LOG) << "icon for unknown type requested. It's a bug.";
         break;
     }
 
@@ -101,7 +101,7 @@ QString ShareServiceUrlManagerPrivate::typeToI18n(ShareServiceUrlManager::Servic
         str = i18n("LiveJournal");
         break;
     case ShareServiceUrlManager::ServiceEndType:
-        qCWarning(PIMCOMMON_LOG) << "text for unknow type requested. It's a bug.";
+        qCWarning(PIMCOMMON_LOG) << "text for unknown type requested. It's a bug.";
         break;
     }
     return str;
@@ -114,10 +114,7 @@ ShareServiceUrlManager::ShareServiceUrlManager(QObject *parent)
     d->initializeMenu();
 }
 
-ShareServiceUrlManager::~ShareServiceUrlManager()
-{
-    delete d;
-}
+ShareServiceUrlManager::~ShareServiceUrlManager() = default;
 
 KActionMenu *ShareServiceUrlManager::menu() const
 {

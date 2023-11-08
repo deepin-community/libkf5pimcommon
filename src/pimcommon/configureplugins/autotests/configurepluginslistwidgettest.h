@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2016-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2016-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -13,8 +13,7 @@ class ConfigurePluginsListWidgetTest : public QObject
     Q_OBJECT
 public:
     explicit ConfigurePluginsListWidgetTest(QObject *parent = nullptr);
-    ~ConfigurePluginsListWidgetTest();
+    ~ConfigurePluginsListWidgetTest() override;
 private Q_SLOTS:
     void shouldHaveDefaultValue();
 };
-

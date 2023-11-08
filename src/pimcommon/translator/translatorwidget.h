@@ -1,6 +1,6 @@
 /*
 
-  SPDX-FileCopyrightText: 2012-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2012-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -8,9 +8,9 @@
 #pragma once
 
 #include "pimcommon_export.h"
+#include <KIO/Job>
 #include <KPIMTextEdit/PlainTextEditor>
 #include <KPIMTextEdit/PlainTextEditorWidget>
-#include <kio/job.h>
 namespace PimCommon
 {
 class TranslatorResultTextEdit : public KPIMTextEdit::PlainTextEditor
@@ -25,7 +25,7 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
-    bool mResultFailed;
+    bool mResultFailed = false;
 };
 
 /**
@@ -66,7 +66,7 @@ public Q_SLOTS:
     void slotTranslate();
     void slotCloseWidget();
 
-private Q_SLOTS:
+private:
     void slotFromLanguageChanged(int, bool initialize = false);
     void slotTextChanged();
     void slotInvertLanguage();
@@ -85,8 +85,9 @@ Q_SIGNALS:
 private:
     void init();
     void initLanguage();
+    void switchEngine();
+    void loadEngineSettings();
     class TranslatorWidgetPrivate;
-    TranslatorWidgetPrivate *const d;
+    std::unique_ptr<TranslatorWidgetPrivate> const d;
 };
 }
-

@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: 2016-2021 Laurent Montel <montel@kde.org>
+  SPDX-FileCopyrightText: 2016-2022 Laurent Montel <montel@kde.org>
 
   SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -7,6 +7,7 @@
 #pragma once
 #include "pimcommon_export.h"
 #include <QObject>
+#include <memory>
 class QAction;
 class KActionCollection;
 namespace PimCommon
@@ -20,14 +21,23 @@ class GenericPlugin;
 class PIMCOMMON_EXPORT ActionType
 {
 public:
-    enum Type { Tools = 0, Edit = 1, File = 2, Action = 3, PopupMenu = 4, ToolBar = 5, Message = 6, Folder = 7 };
-    ActionType()
-    {
-    }
+    enum Type {
+        Tools = 0,
+        Edit = 1,
+        File = 2,
+        Action = 3,
+        PopupMenu = 4,
+        ToolBar = 5,
+        Message = 6,
+        Folder = 7,
+    };
+    ActionType() = default;
 
     ActionType(QAction *action, Type type);
     Q_REQUIRED_RESULT QAction *action() const;
     Q_REQUIRED_RESULT Type type() const;
+
+    Q_REQUIRED_RESULT bool operator==(const ActionType &other) const;
 
 private:
     QAction *mAction = nullptr;
@@ -40,7 +50,7 @@ class PIMCOMMON_EXPORT AbstractGenericPluginInterface : public QObject
     Q_OBJECT
 public:
     explicit AbstractGenericPluginInterface(QObject *parent = nullptr);
-    ~AbstractGenericPluginInterface();
+    ~AbstractGenericPluginInterface() override;
 
     void setParentWidget(QWidget *parent);
     Q_REQUIRED_RESULT QWidget *parentWidget() const;
@@ -58,6 +68,6 @@ Q_SIGNALS:
     void message(const QString &str);
 
 private:
-    AbstractGenericPluginInterfacePrivate *const d;
+    std::unique_ptr<AbstractGenericPluginInterfacePrivate> const d;
 };
 }
